@@ -9,7 +9,13 @@
 
 .logo {
   cursor: pointer;
-  font-size: 20px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.logoImg {
+  height: 36px;
+  width: 36px;
+  object-fit: contain;
 }
 

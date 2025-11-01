@@ -1,10 +1,11 @@
 import React from 'react';
-import { Input as AntInput, InputProps as AntInputProps } from 'antd';
+import { Input as AntInput } from 'antd';
+import type { InputProps as AntInputProps } from 'antd';
 import type { TextAreaProps as AntTextAreaProps } from 'antd/es/input';
 import styles from './Input.module.css';
 
-export interface InputProps extends AntInputProps {}
-export interface TextAreaProps extends AntTextAreaProps {}
+export type InputProps = AntInputProps;
+export type TextAreaProps = AntTextAreaProps;
 
 export const Input: React.FC<InputProps> & {
   TextArea: React.FC<TextAreaProps>;

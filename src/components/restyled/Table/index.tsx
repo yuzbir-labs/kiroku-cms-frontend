@@ -1,8 +1,8 @@
-import React from 'react';
-import { Table as AntTable, TableProps as AntTableProps } from 'antd';
+import { Table as AntTable } from 'antd';
+import type { TableProps as AntTableProps } from 'antd';
 import styles from './Table.module.css';
 
-export interface TableProps<T = any> extends AntTableProps<T> {}
+export type TableProps<T = object> = AntTableProps<T>;
 
 export const Table = <T extends object>({
   className,

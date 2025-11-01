@@ -26,10 +26,15 @@
 }
 
 .logo {
-  font-size: 28px;
-  font-weight: 700;
-  color: #0070f3;
-  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logoSvg {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
 }
 
 .loginButton {

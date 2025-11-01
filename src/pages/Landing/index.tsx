@@ -81,7 +81,13 @@ const Landing: React.FC = () => {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <div className={styles.logo}>Kiroku</div>
+          <div className={styles.logo} onClick={() => navigate('/')}>
+            <img
+              src="/kiroku-icon.svg"
+              alt="Kiroku"
+              className={styles.logoSvg}
+            />
+          </div>
           <button className={styles.loginButton} onClick={handleLoginClick}>
             Daxil ol
           </button>
