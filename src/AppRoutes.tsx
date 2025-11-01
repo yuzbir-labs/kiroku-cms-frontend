@@ -1,6 +1,7 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './layouts/index';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Branches from './pages/Branches';
 import Dashboard from './pages/Dashboard';
@@ -8,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route
         path="/dashboard"
@@ -25,7 +27,6 @@ const AppRoutes: React.FC = () => {
           </Layout>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route
         path="*"
         element={
