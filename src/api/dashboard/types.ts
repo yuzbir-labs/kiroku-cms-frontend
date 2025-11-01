@@ -1,3 +1,3 @@
 export interface DashboardStats {
-  count: number;
+  branches_count: number;
 }

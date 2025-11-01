@@ -1,13 +1,16 @@
-import { api } from '../../config';
-import { createQuery } from '../../config/queryFactory';
+import { createQuery } from '../../config';
+import api from '../../config/api';
 import type { DashboardStats } from './types';
 
-const fetchBranchesCount = async (): Promise<DashboardStats> => {
-  const response = await api.get('/products/?page=1&page_size=1');
-  return { count: response.data.count || 0 };
+export const dashboardAPI = {
+  getStats: async (): Promise<DashboardStats> => {
+    const response = await api.get('/dashboard/stats/');
+    return response.data;
+  },
 };
 
-export const useBranchesCountQuery = createQuery<DashboardStats>({
-  queryKey: ['branches-count'],
-  queryFn: fetchBranchesCount,
-});
+export const useDashboardStatsQuery = () =>
+  createQuery<DashboardStats>({
+    queryKey: ['dashboardStats'],
+    queryFn: () => dashboardAPI.getStats(),
+  })();

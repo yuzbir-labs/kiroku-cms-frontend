@@ -1,5 +1,5 @@
-import { api } from '../../config';
-import { createQuery } from '../../config/queryFactory';
+import { createQuery } from '../../config';
+import api from '../../config/api';
 import type { PaginatedBranchesResponse } from './types';
 
 const fetchBranches = async (

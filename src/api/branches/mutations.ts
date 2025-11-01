@@ -1,5 +1,5 @@
-import { api } from '../../config';
-import { createMutation } from '../../config/queryFactory';
+import { createMutation } from '../../config';
+import api from '../../config/api';
 import type {
   Branch,
   UpdateMinPricePayload,

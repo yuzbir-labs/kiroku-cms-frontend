@@ -1,0 +1,63 @@
+.container {
+  padding: 24px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.errorContainer {
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+}
+
+.welcomeCard {
+  margin-bottom: 24px;
+}
+
+.userInfoRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userInfoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userInfoLabel {
+  font-weight: 600;
+  color: #666;
+}
+
+.userInfoValue {
+  color: #333;
+}
+
+.statusActive {
+  color: #52c41a;
+}
+
+.statusInactive {
+  color: #ff4d4f;
+}
+
+.emailExtra {
+  color: #666;
+}
+
