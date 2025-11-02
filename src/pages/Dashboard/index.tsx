@@ -139,7 +139,7 @@ const Dashboard: React.FC = () => {
                 <span className={styles.orgInfoValue}>{organization.code}</span>
               </div>
             </Col>
-            {organization.description && (
+            {organization.description && organization.description.trim() && (
               <Col xs={24}>
                 <div className={styles.orgInfoItem}>
                   <span className={styles.orgInfoLabel}>Təsvir:</span>
@@ -149,7 +149,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </Col>
             )}
-            {organization.email && (
+            {organization.email && organization.email.trim() && (
               <Col xs={24} sm={12}>
                 <div className={styles.orgInfoItem}>
                   <span className={styles.orgInfoLabel}>Email:</span>
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </Col>
             )}
-            {organization.phone_number && (
+            {organization.phone_number && organization.phone_number.trim() && (
               <Col xs={24} sm={12}>
                 <div className={styles.orgInfoItem}>
                   <span className={styles.orgInfoLabel}>Telefon:</span>
@@ -169,7 +169,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </Col>
             )}
-            {organization.website && (
+            {organization.website && organization.website.trim() && (
               <Col xs={24} sm={12}>
                 <div className={styles.orgInfoItem}>
                   <span className={styles.orgInfoLabel}>Vebsayt:</span>
@@ -185,12 +185,32 @@ const Dashboard: React.FC = () => {
                 </div>
               </Col>
             )}
-            {organization.address && (
+            {organization.address && organization.address.trim() && (
               <Col xs={24}>
                 <div className={styles.orgInfoItem}>
                   <span className={styles.orgInfoLabel}>Ünvan:</span>
                   <span className={styles.orgInfoValue}>
                     {organization.address}
+                  </span>
+                </div>
+              </Col>
+            )}
+            {(organization.city ||
+              organization.state ||
+              organization.country ||
+              organization.postal_code) && (
+              <Col xs={24}>
+                <div className={styles.orgInfoItem}>
+                  <span className={styles.orgInfoLabel}>Yer:</span>
+                  <span className={styles.orgInfoValue}>
+                    {[
+                      organization.city,
+                      organization.state,
+                      organization.country,
+                      organization.postal_code,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')}
                   </span>
                 </div>
               </Col>
@@ -211,6 +231,35 @@ const Dashboard: React.FC = () => {
                 </span>
               </div>
             </Col>
+            <Col xs={24} sm={12}>
+              <div className={styles.orgInfoItem}>
+                <span className={styles.orgInfoLabel}>Status:</span>
+                <span
+                  className={
+                    organization.is_active
+                      ? styles.statusActive
+                      : styles.statusInactive
+                  }
+                >
+                  {organization.is_active ? 'Aktiv' : 'Deaktiv'}
+                </span>
+              </div>
+            </Col>
+            <Col xs={24} sm={12}>
+              <div className={styles.orgInfoItem}>
+                <span className={styles.orgInfoLabel}>Yaradılma tarixi:</span>
+                <span className={styles.orgInfoValue}>
+                  {new Date(organization.created_at).toLocaleDateString(
+                    'az-AZ',
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }
+                  )}
+                </span>
+              </div>
+            </Col>
           </Row>
         </Card>
       )}
@@ -222,7 +271,7 @@ const Dashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Filiallar"
-                  value={statistics.branches_count || 0}
+                  value={statistics.total_branches || 0}
                   prefix={<ShopOutlined />}
                   valueStyle={{ color: '#3f8600' }}
                 />
@@ -232,7 +281,7 @@ const Dashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Tələbələr"
-                  value={statistics.students_count || 0}
+                  value={statistics.total_students || 0}
                   prefix={<TeamOutlined />}
                   valueStyle={{ color: '#1890ff' }}
                 />
@@ -242,7 +291,7 @@ const Dashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Müəllimlər"
-                  value={statistics.teachers_count || 0}
+                  value={statistics.total_teachers || 0}
                   prefix={<UserOutlined />}
                   valueStyle={{ color: '#cf1322' }}
                 />
@@ -252,7 +301,7 @@ const Dashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Kurslar"
-                  value={statistics.courses_count || 0}
+                  value={statistics.total_courses || 0}
                   prefix={<BookOutlined />}
                   valueStyle={{ color: '#faad14' }}
                 />

@@ -258,6 +258,16 @@ const Profile: React.FC = () => {
                       </span>
                     </div>
                   </Col>
+                  {organization?.code && (
+                    <Col xs={24} sm={12}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Təşkilat kodu:</span>
+                        <span className={styles.infoValue}>
+                          {organization.code}
+                        </span>
+                      </div>
+                    </Col>
+                  )}
                   {!isOrganizationAdmin && userBranches.length > 0 && (
                     <Col xs={24}>
                       <div className={styles.infoItem}>

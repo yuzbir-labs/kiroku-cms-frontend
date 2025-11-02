@@ -60,10 +60,12 @@ export interface OrganizationListParams {
 }
 
 export interface OrganizationStatistics {
-  branches_count: number;
-  students_count: number;
-  teachers_count: number;
-  courses_count: number;
+  organization_id: number;
+  organization_name: string;
+  total_branches: number;
+  total_students: number;
+  total_teachers: number;
+  total_courses: number;
 }
 
 export interface OrganizationBranch {
