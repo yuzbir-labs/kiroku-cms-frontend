@@ -33,6 +33,7 @@ export interface User {
   organization: number | null;
   branches: number[];
   is_active: boolean;
+  is_superuser: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -72,5 +73,9 @@ export interface ProfileUpdateRequest {
   phone_number?: string | null;
   date_of_birth?: string | null;
   address?: string | null;
-  profile_picture?: string | null;
+  profile_picture?: File | string | null;
+  user_type?: UserType;
+  organization?: number | null;
+  branches?: number[];
+  is_active?: boolean;
 }

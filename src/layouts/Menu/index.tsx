@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Drawer, Menu as AntMenu, message, Avatar, Space } from 'antd';
 import {
   DashboardOutlined,
@@ -15,6 +15,17 @@ import {
 } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLogoutMutation, useCurrentUserQuery } from '../../api';
+import {
+  canViewDashboard,
+  canViewBranches,
+  canViewCourses,
+  canViewCourseGroups,
+  canViewEnrollments,
+  canViewAttendance,
+  canViewInquiries,
+  canManageUsers,
+  getUserRoleLabel,
+} from '../../utils/permissions';
 import styles from './Menu.module.css';
 
 interface MenuProps {
@@ -29,16 +40,6 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const { data: user } = useCurrentUserQuery();
   const logoutMutation = useLogoutMutation(messageApi);
-
-  const userTypeLabels: Record<string, string> = {
-    NOT_SET: 'Təyin edilməyib',
-    STUDENT: 'Tələbə',
-    PARENT: 'Valideyn',
-    TEACHER: 'Müəllim',
-    BRANCH_MANAGER: 'Filial Meneceri',
-    BRANCH_ADMIN: 'Filial Admini',
-    ORGANIZATION_ADMIN: 'Təşkilat Admini',
-  };
 
   // Handle navigation after successful logout
   useEffect(() => {
@@ -62,48 +63,86 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
     }
   };
 
-  const mainMenuItems = [
-    {
-      key: '/dashboard',
-      icon: <DashboardOutlined />,
-      label: 'İdarə Paneli',
-    },
-    {
-      key: '/branches',
-      icon: <BankOutlined />,
-      label: 'Filiallar',
-    },
-    {
-      key: '/courses',
-      icon: <BookOutlined />,
-      label: 'Kurslar',
-    },
-    {
-      key: '/course-groups',
-      icon: <TeamOutlined />,
-      label: 'Qruplar',
-    },
-    {
-      key: '/enrollments',
-      icon: <UserAddOutlined />,
-      label: 'Qeydiyyatlar',
-    },
-    {
-      key: '/attendance',
-      icon: <CheckCircleOutlined />,
-      label: 'Davamiyyət',
-    },
-    {
-      key: '/inquiries',
-      icon: <PhoneOutlined />,
-      label: 'Sorğular',
-    },
-    {
-      key: '/users',
-      icon: <UserOutlined />,
-      label: 'İstifadəçilər',
-    },
-  ];
+  // Dynamically generate menu items based on user permissions
+  const mainMenuItems = useMemo(() => {
+    if (!user) return [];
+
+    const items = [];
+
+    // Dashboard - not available to students
+    if (canViewDashboard(user)) {
+      items.push({
+        key: '/dashboard',
+        icon: <DashboardOutlined />,
+        label: 'İdarə Paneli',
+      });
+    }
+
+    // Branches - not available to students
+    if (canViewBranches(user)) {
+      items.push({
+        key: '/branches',
+        icon: <BankOutlined />,
+        label: 'Filiallar',
+      });
+    }
+
+    // Courses - not available to students
+    if (canViewCourses(user)) {
+      items.push({
+        key: '/courses',
+        icon: <BookOutlined />,
+        label: 'Kurslar',
+      });
+    }
+
+    // Course Groups - students and teachers can view
+    if (canViewCourseGroups(user)) {
+      items.push({
+        key: '/course-groups',
+        icon: <TeamOutlined />,
+        label: 'Qruplar',
+      });
+    }
+
+    // Enrollments - not available to students
+    if (canViewEnrollments(user)) {
+      items.push({
+        key: '/enrollments',
+        icon: <UserAddOutlined />,
+        label: 'Qeydiyyatlar',
+      });
+    }
+
+    // Attendance - students and teachers can view
+    if (canViewAttendance(user)) {
+      items.push({
+        key: '/attendance',
+        icon: <CheckCircleOutlined />,
+        label: 'Davamiyyət',
+      });
+    }
+
+    // Inquiries - only for managers and admins
+    if (canViewInquiries(user)) {
+      items.push({
+        key: '/inquiries',
+        icon: <PhoneOutlined />,
+        label: 'Sorğular',
+      });
+    }
+
+    // Users - only for managers and admins
+    if (canManageUsers(user)) {
+      items.push({
+        key: '/users',
+        icon: <UserOutlined />,
+        label: 'İstifadəçilər',
+      });
+    }
+
+    return items;
+  }, [user]);
 
   const bottomMenuItems = [
     {
@@ -146,9 +185,7 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
             <div className={styles.userDetails}>
               <div className={styles.userName}>{user?.full_name || 'User'}</div>
               <div className={styles.userRole}>
-                {user?.user_type
-                  ? userTypeLabels[user.user_type]
-                  : 'Customer Admin'}
+                {getUserRoleLabel(user?.user_type)}
               </div>
             </div>
           </Space>
