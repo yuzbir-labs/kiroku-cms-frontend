@@ -13,8 +13,8 @@ export interface Organization {
   postal_code: string | null;
   logo: string | null;
   is_active: boolean;
-  branch_count: string;
-  total_students: string;
+  branch_count: number;
+  total_students: number;
   created_at: string;
   updated_at: string;
 }
@@ -57,4 +57,25 @@ export interface OrganizationListParams {
   is_active?: boolean;
   search?: string;
   state?: string;
+}
+
+export interface OrganizationStatistics {
+  branches_count: number;
+  students_count: number;
+  teachers_count: number;
+  courses_count: number;
+}
+
+export interface OrganizationBranch {
+  id: number;
+  name: string;
+  code: string;
+  address: string;
+  city: string;
+  state: string | null;
+  country: string;
+  postal_code: string | null;
+  phone_number: string;
+  email: string;
+  is_active: boolean;
 }

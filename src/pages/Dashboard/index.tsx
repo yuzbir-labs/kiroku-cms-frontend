@@ -73,8 +73,6 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  const isLoading = userLoading || orgLoading || statsLoading;
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>

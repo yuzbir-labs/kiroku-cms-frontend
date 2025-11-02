@@ -1,6 +1,11 @@
 import { createQuery } from '../../config';
 import api from '../../config/api';
-import type { Organization, OrganizationListParams } from './types';
+import type {
+  Organization,
+  OrganizationListParams,
+  OrganizationStatistics,
+  OrganizationBranch,
+} from './types';
 
 // API functions
 const fetchOrganizations = async (
@@ -15,20 +20,23 @@ const fetchOrganization = async (): Promise<Organization> => {
   return response.data;
 };
 
-const fetchOrganizationBranches = async (id: number): Promise<any[]> => {
+const fetchOrganizationBranches = async (
+  id: number
+): Promise<OrganizationBranch[]> => {
   const response = await api.get(`/organizations/${id}/branches/`);
   return response.data;
 };
 
-const fetchOrganizationStatistics = async (): Promise<any> => {
-  const response = await api.get(`/organizations/my/statistics/`);
-  return response.data;
-};
+const fetchOrganizationStatistics =
+  async (): Promise<OrganizationStatistics> => {
+    const response = await api.get(`/organizations/my/statistics/`);
+    return response.data;
+  };
 
 // Query hooks
 export const useOrganizationsQuery = (params?: OrganizationListParams) => {
   return createQuery<Organization[]>({
-    queryKey: ['organizations', 'list', params],
+    queryKey: ['organizations', 'list', JSON.stringify(params)],
     queryFn: () => fetchOrganizations(params),
   })();
 };
@@ -44,7 +52,7 @@ export const useOrganizationQuery = () => {
 };
 
 export const useOrganizationBranchesQuery = (id: number) => {
-  return createQuery<any[]>({
+  return createQuery<OrganizationBranch[]>({
     queryKey: ['organizations', 'branches', id],
     queryFn: () => fetchOrganizationBranches(id),
     options: {
@@ -54,7 +62,7 @@ export const useOrganizationBranchesQuery = (id: number) => {
 };
 
 export const useOrganizationStatisticsQuery = () => {
-  return createQuery<any>({
+  return createQuery<OrganizationStatistics>({
     queryKey: ['organizations', 'statistics'],
     queryFn: () => fetchOrganizationStatistics(),
     options: {
