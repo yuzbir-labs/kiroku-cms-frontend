@@ -2,8 +2,13 @@ import React, { useEffect } from 'react';
 import { Card, Form, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
-import { useLoginMutation, type LoginRequest } from '../../api/auth';
+import {
+  useLoginMutation,
+  useCurrentUserQuery,
+  type LoginRequest,
+} from '../../api/auth';
 import { Button, Input } from '../../components';
+import { UserRoles } from '../../utils/permissions';
 import styles from './Login.module.css';
 
 const Login: React.FC = () => {
@@ -12,14 +17,32 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const loginMutation = useLoginMutation(messageApi);
+  const { data: user } = useCurrentUserQuery();
 
+  // Redirect already authenticated users
   useEffect(() => {
-    if (loginMutation.isSuccess) {
-      setTimeout(() => {
+    if (user && !loginMutation.isPending) {
+      if (user.user_type === UserRoles.STUDENT) {
         navigate('/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [user, navigate, loginMutation.isPending]);
+
+  // Redirect after successful login
+  useEffect(() => {
+    if (loginMutation.isSuccess && user) {
+      setTimeout(() => {
+        // Redirect students to course groups, others to dashboard
+        if (user.user_type === UserRoles.STUDENT) {
+          navigate('/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
       }, 500);
     }
-  }, [loginMutation.isSuccess, navigate]);
+  }, [loginMutation.isSuccess, user, navigate]);
 
   const handleSubmit = (values: LoginRequest) => {
     loginMutation.mutate(values);

@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentUserQuery } from '../../api/auth';
+import { UserRoles } from '../../utils/permissions';
 import styles from './Landing.module.css';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const { data: user } = useCurrentUserQuery();
+
+  // Redirect authenticated users to appropriate page
+  useEffect(() => {
+    if (user) {
+      if (user.user_type === UserRoles.STUDENT) {
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     setIsVisible(true);
@@ -191,6 +205,7 @@ const Landing: React.FC = () => {
               alt="Kiroku"
               className={styles.logoSvg}
             />
+            <span className={styles.logoText}>iroku</span>
           </div>
           <button className={styles.loginButton} onClick={handleLoginClick}>
             Daxil ol

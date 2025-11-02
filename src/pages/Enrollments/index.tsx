@@ -25,7 +25,6 @@ import {
   useDeleteEnrollmentMutation,
   useCompleteEnrollmentMutation,
   useDropEnrollmentMutation,
-  useCourseGroupsQuery,
   type Enrollment,
   type EnrollmentCreate,
   type EnrollmentStatus,
@@ -53,8 +52,6 @@ const Enrollments: React.FC = () => {
     search: searchTerm || undefined,
     status: statusFilter,
   });
-
-  const { data: courseGroups } = useCourseGroupsQuery({ status: 'ACTIVE' });
 
   const createMutation = useCreateEnrollmentMutation(messageApi);
   const updateMutation = usePartialUpdateEnrollmentMutation(messageApi);
@@ -328,21 +325,11 @@ const Enrollments: React.FC = () => {
               </Form.Item>
               <Form.Item
                 name="course_group"
-                label="Qrup"
-                rules={[{ required: true, message: 'Qrup seçin' }]}
+                label="Qrup ID"
+                rules={[{ required: true, message: 'Qrup ID daxil edin' }]}
+                tooltip="Qrup seçmək üçün qrup ID-ni daxil edin. Qrup məlumatlarını Kurslar səhifəsindən əldə edə bilərsiniz."
               >
-                <Select
-                  options={courseGroups?.map((group) => ({
-                    label: `${group.course_name} - ${group.name}`,
-                    value: group.id,
-                  }))}
-                  showSearch
-                  filterOption={(input, option) =>
-                    (option?.label ?? '')
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                />
+                <Input type="number" placeholder="Qrup ID daxil edin" />
               </Form.Item>
             </>
           )}

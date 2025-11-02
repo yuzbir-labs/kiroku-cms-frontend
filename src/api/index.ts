@@ -2,7 +2,6 @@
 export * from './attendance';
 export * from './auth';
 export * from './branches';
-export * from './course-groups';
 export * from './courses';
 export * from './dashboard';
 export * from './enrollments';

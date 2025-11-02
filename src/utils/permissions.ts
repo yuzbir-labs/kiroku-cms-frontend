@@ -150,62 +150,6 @@ export const canManageUsers = (user: User | null | undefined): boolean => {
 };
 
 /**
- * Check if user can create course groups
- * Organization Admin, Branch Admin, Branch Manager
- */
-export const canCreateCourseGroups = (
-  user: User | null | undefined
-): boolean => {
-  return hasAnyRole(user, [
-    UserRoles.ORGANIZATION_ADMIN,
-    UserRoles.BRANCH_ADMIN,
-    UserRoles.BRANCH_MANAGER,
-  ]);
-};
-
-/**
- * Check if user can update course groups
- * Organization Admin, Branch Admin, Branch Manager
- */
-export const canUpdateCourseGroups = (
-  user: User | null | undefined
-): boolean => {
-  return hasAnyRole(user, [
-    UserRoles.ORGANIZATION_ADMIN,
-    UserRoles.BRANCH_ADMIN,
-    UserRoles.BRANCH_MANAGER,
-  ]);
-};
-
-/**
- * Check if user can delete course groups
- * Organization Admin, Branch Admin, Branch Manager
- */
-export const canDeleteCourseGroups = (
-  user: User | null | undefined
-): boolean => {
-  return hasAnyRole(user, [
-    UserRoles.ORGANIZATION_ADMIN,
-    UserRoles.BRANCH_ADMIN,
-    UserRoles.BRANCH_MANAGER,
-  ]);
-};
-
-/**
- * Check if user can view course groups
- * Teachers and Students can view course groups
- */
-export const canViewCourseGroups = (user: User | null | undefined): boolean => {
-  return hasAnyRole(user, [
-    UserRoles.ORGANIZATION_ADMIN,
-    UserRoles.BRANCH_ADMIN,
-    UserRoles.BRANCH_MANAGER,
-    UserRoles.TEACHER,
-    UserRoles.STUDENT,
-  ]);
-};
-
-/**
  * Check if user can mark attendance
  * Organization Admin, Branch Admin, Branch Manager, Teacher
  */

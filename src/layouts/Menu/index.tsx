@@ -4,7 +4,6 @@ import {
   DashboardOutlined,
   BankOutlined,
   BookOutlined,
-  TeamOutlined,
   CheckCircleOutlined,
   UserAddOutlined,
   PhoneOutlined,
@@ -19,7 +18,6 @@ import {
   canViewDashboard,
   canViewBranches,
   canViewCourses,
-  canViewCourseGroups,
   canViewEnrollments,
   canViewAttendance,
   canViewInquiries,
@@ -93,15 +91,6 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
         key: '/courses',
         icon: <BookOutlined />,
         label: 'Kurslar',
-      });
-    }
-
-    // Course Groups - students and teachers can view
-    if (canViewCourseGroups(user)) {
-      items.push({
-        key: '/course-groups',
-        icon: <TeamOutlined />,
-        label: 'Qruplar',
       });
     }
 
