@@ -12,24 +12,38 @@ import {
   Input,
   DatePicker,
   message,
+  Modal,
 } from 'antd';
-import { UserOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  EditOutlined,
+  SaveOutlined,
+  LockOutlined,
+} from '@ant-design/icons';
 import dayjs from 'dayjs';
 import {
   useCurrentUserQuery,
   useUpdateProfileMutation,
+  useChangePasswordMutation,
   useBranchesQuery,
   useOrganizationQuery,
 } from '../../api';
-import type { UserType, ProfileUpdateRequest } from '../../api';
+import type {
+  UserType,
+  ProfileUpdateRequest,
+  PasswordChangeRequest,
+} from '../../api';
 import styles from './Profile.module.css';
 
 const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [passwordForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const { data: user, isLoading, error } = useCurrentUserQuery();
   const updateProfileMutation = useUpdateProfileMutation(messageApi);
+  const changePasswordMutation = useChangePasswordMutation(messageApi);
 
   const { data: branches } = useBranchesQuery({
     ...(user?.branches && user.branches.length > 0
@@ -93,6 +107,28 @@ const Profile: React.FC = () => {
     } catch (error) {
       console.error('Validation failed:', error);
     }
+  };
+
+  const handlePasswordChange = async () => {
+    try {
+      const values = await passwordForm.validateFields();
+      const passwordData: PasswordChangeRequest = {
+        current_password: values.current_password,
+        new_password: values.new_password,
+        confirm_password: values.confirm_password,
+      };
+
+      await changePasswordMutation.mutateAsync(passwordData);
+      setIsPasswordModalVisible(false);
+      passwordForm.resetFields();
+    } catch (error) {
+      console.error('Password change failed:', error);
+    }
+  };
+
+  const handlePasswordModalCancel = () => {
+    setIsPasswordModalVisible(false);
+    passwordForm.resetFields();
   };
 
   if (isLoading) {
@@ -316,7 +352,84 @@ const Profile: React.FC = () => {
             </div>
           </Card>
         </Col>
+        <Col xs={24} sm={12}>
+          <Card title="Təhlükəsizlik" className={styles.metaCard}>
+            <Button
+              type="primary"
+              icon={<LockOutlined />}
+              onClick={() => setIsPasswordModalVisible(true)}
+              block
+              size="large"
+            >
+              Şifrəni Dəyişdir
+            </Button>
+          </Card>
+        </Col>
       </Row>
+
+      <Modal
+        title="Şifrəni Dəyişdir"
+        open={isPasswordModalVisible}
+        onOk={handlePasswordChange}
+        onCancel={handlePasswordModalCancel}
+        confirmLoading={changePasswordMutation.isPending}
+        okText="Dəyişdir"
+        cancelText="Ləğv et"
+      >
+        <Form
+          form={passwordForm}
+          layout="vertical"
+          style={{ marginTop: '24px' }}
+        >
+          <Form.Item
+            label="Cari Şifrə"
+            name="current_password"
+            rules={[{ required: true, message: 'Cari şifrənizi daxil edin' }]}
+          >
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Cari şifrə"
+              size="large"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Yeni Şifrə"
+            name="new_password"
+            rules={[
+              { required: true, message: 'Yeni şifrənizi daxil edin' },
+              { min: 8, message: 'Şifrə ən azı 8 simvol olmalıdır' },
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Yeni şifrə"
+              size="large"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Yeni Şifrəni Təsdiqlə"
+            name="confirm_password"
+            dependencies={['new_password']}
+            rules={[
+              { required: true, message: 'Yeni şifrənizi təsdiq edin' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('new_password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Şifrələr uyğun gəlmir'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Yeni şifrəni təsdiqlə"
+              size="large"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

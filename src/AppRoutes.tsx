@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './layouts/index';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Branches from './pages/Branches';
 import Courses from './pages/Courses';
@@ -18,6 +19,7 @@ const AppRoutes: React.FC = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route
         path="/dashboard"
         element={

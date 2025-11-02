@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Card, Form, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useLoginMutation, type LoginRequest } from '../../api/login';
 import { Button, Input } from '../../components';
 import styles from './Login.module.css';
@@ -62,6 +62,14 @@ const Login: React.FC = () => {
               placeholder="Şifrə"
               autoComplete="current-password"
             />
+          </Form.Item>
+
+          <Form.Item>
+            <div className={styles.forgotPassword}>
+              <Link to="/reset-password" className={styles.forgotPasswordLink}>
+                Şifrəni unutmusunuz?
+              </Link>
+            </div>
           </Form.Item>
 
           <Form.Item>
