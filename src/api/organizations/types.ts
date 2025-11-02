@@ -13,8 +13,8 @@ export interface Organization {
   postal_code: string | null;
   logo: string | null;
   is_active: boolean;
-  branch_count: number;
-  total_students: number;
+  branch_count: string;
+  total_students: string;
   created_at: string;
   updated_at: string;
 }

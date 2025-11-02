@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Card, Form, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
-import { useLoginMutation, type LoginRequest } from '../../api/login';
+import { useLoginMutation, type LoginRequest } from '../../api/auth';
 import { Button, Input } from '../../components';
 import styles from './Login.module.css';
 

@@ -18,6 +18,11 @@ const fetchCourseGroups = async (id: number): Promise<unknown[]> => {
   return response.data;
 };
 
+const fetchMyCourseGroups = async (): Promise<unknown[]> => {
+  const response = await api.get('/courses/my-groups/');
+  return response.data;
+};
+
 // Query hooks
 export const useCoursesQuery = (params?: CourseListParams) => {
   return createQuery<Course[]>({
@@ -43,5 +48,12 @@ export const useCourseGroupsByCourseQuery = (id: number) => {
     options: {
       enabled: !!id,
     },
+  })();
+};
+
+export const useMyCourseGroupsQuery = () => {
+  return createQuery<unknown[]>({
+    queryKey: ['courses', 'my-groups'],
+    queryFn: fetchMyCourseGroups,
   })();
 };

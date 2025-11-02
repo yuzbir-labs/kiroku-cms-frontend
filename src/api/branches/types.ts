@@ -1,5 +1,6 @@
 export interface Branch {
   id: number;
+  organization: number;
   organization_name: string;
   name: string;
   code: string;
@@ -10,14 +11,13 @@ export interface Branch {
   postal_code: string | null;
   phone_number: string;
   email: string;
-  branch_admin: number | null;
-  branch_admin_name: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export interface BranchCreate {
+  organization: number;
   name: string;
   code: string;
   address: string;
@@ -27,11 +27,11 @@ export interface BranchCreate {
   postal_code?: string | null;
   phone_number: string;
   email: string;
-  branch_admin?: number | null;
   is_active?: boolean;
 }
 
 export interface BranchUpdate {
+  organization?: number;
   name?: string;
   code?: string;
   address?: string;
@@ -41,7 +41,6 @@ export interface BranchUpdate {
   postal_code?: string | null;
   phone_number?: string;
   email?: string;
-  branch_admin?: number | null;
   is_active?: boolean;
 }
 

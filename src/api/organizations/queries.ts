@@ -20,10 +20,8 @@ const fetchOrganization = async (): Promise<Organization> => {
   return response.data;
 };
 
-const fetchOrganizationBranches = async (
-  id: number
-): Promise<OrganizationBranch[]> => {
-  const response = await api.get(`/organizations/${id}/branches/`);
+const fetchOrganizationBranches = async (): Promise<OrganizationBranch[]> => {
+  const response = await api.get('/organizations/my/branches/');
   return response.data;
 };
 
@@ -51,13 +49,10 @@ export const useOrganizationQuery = () => {
   })();
 };
 
-export const useOrganizationBranchesQuery = (id: number) => {
+export const useOrganizationBranchesQuery = () => {
   return createQuery<OrganizationBranch[]>({
-    queryKey: ['organizations', 'branches', id],
-    queryFn: () => fetchOrganizationBranches(id),
-    options: {
-      enabled: !!id,
-    },
+    queryKey: ['organizations', 'branches'],
+    queryFn: fetchOrganizationBranches,
   })();
 };
 

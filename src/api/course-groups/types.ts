@@ -28,7 +28,6 @@ export interface CourseGroup {
   teacher: number[];
   teacher_name: string;
   max_students: number;
-  annual_price: string;
   monthly_price: string;
   schedule: ScheduleItem[];
   days_of_week: unknown[];
@@ -50,7 +49,6 @@ export interface CourseGroupCreate {
   code: string;
   teacher: number[];
   max_students: number;
-  annual_price: string;
   monthly_price: string;
   schedule: ScheduleItem[];
   start_date: string;
@@ -65,7 +63,6 @@ export interface CourseGroupUpdate {
   code?: string;
   teacher?: number[];
   max_students?: number;
-  annual_price?: string;
   monthly_price?: string;
   schedule?: ScheduleItem[];
   start_date?: string;

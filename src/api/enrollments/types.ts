@@ -15,7 +15,6 @@ export interface Enrollment {
   teacher_name: string;
   status: EnrollmentStatus;
   monthly_price: string;
-  annual_price: string;
   enrollment_date: string;
   completion_date: string | null;
   grade: string | null;

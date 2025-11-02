@@ -7,7 +7,7 @@ import {
   BookOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useCurrentUserQuery } from '../../api/login';
+import { useCurrentUserQuery } from '../../api/auth';
 import {
   useOrganizationQuery,
   useOrganizationStatisticsQuery,
