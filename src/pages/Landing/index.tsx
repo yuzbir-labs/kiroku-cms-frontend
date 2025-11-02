@@ -1,13 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Landing.module.css';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+
+    const handleScroll = () => {
+      const elements = document.querySelectorAll(`.${styles.animateOnScroll}`);
+      elements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight - 100;
+        if (isVisible) {
+          element.classList.add(styles.visible);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check on mount
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLoginClick = () => {
     navigate('/login');
   };
+
+  const statistics = [
+    { value: '100+', label: 'Təşkilat', icon: '🏢' },
+    { value: '5000+', label: 'Tələbə', icon: '👨‍🎓' },
+    { value: '500+', label: 'Müəllim', icon: '👨‍🏫' },
+    { value: '1000+', label: 'Kurs', icon: '📚' },
+  ];
 
   const features = [
     {
@@ -16,11 +44,11 @@ const Landing: React.FC = () => {
       description:
         'Kiroku sizə bir neçə fiziki və ya onlayn tədris məkanını vahid platformadan idarə etməyə imkan verir.',
       list: [
-        'Kurslar',
-        'Təlimçilər',
-        'Tələbələr',
-        'Qruplar',
-        'Tədris cədvəlləri',
+        'Filial məlumatlarının idarəsi',
+        'Kurslar və qrupların təşkili',
+        'Təlimçilərin və tələbələrin koordinasiyası',
+        'Tədris cədvəllərinin planlaşdırılması',
+        'Vahid mərkəzdən monitorinq',
       ],
     },
     {
@@ -30,9 +58,11 @@ const Landing: React.FC = () => {
         'Kiroku kurs rəhbərlərinə bütün tədris proseslərini eyni yerdən izləmək imkanı yaradır:',
       list: [
         'Kurs açılması və qruplaşdırılması',
+        'Səviyyə və statusların idarəsi',
         'Təlimçilərin kurslara təyin olunması',
         'Tələbələrin qeydiyyata alınması',
         'Qrup içi və fərdi məlumatların idarə edilməsi',
+        'Kurs materiallarının paylaşılması',
       ],
     },
     {
@@ -43,20 +73,9 @@ const Landing: React.FC = () => {
       list: [
         'Dərsə gələn və gəlməyən tələbələrin asan işarələnməsi',
         'Davamiyyət tarixçəsinin hər an izlənməsi',
-        'Müəllim və rəhbərlərin uyğun icazə səriştələri',
-        'Tələbələrin aktivlik dinamikasının analiz olunması',
-      ],
-    },
-    {
-      icon: '📁',
-      title: 'Materiallar və Resurs Paylaşımı',
-      description:
-        'Təlimçilər dərs vəsaitlərini, slaydları, tapşırıqları, testləri və başqa faylları sistem üzərindən tələbələrlə asanlıqla bölüşə bilərlər.',
-      list: [
-        'Paylaşılan materialları yükləyə',
-        'Tapşırıqlar haqqında məlumat ala',
-        'Qiymətləndirmələrini görə',
-        'Müəllimləri ilə rahat ünsiyyət qura bilərlər',
+        'Müəllim və rəhbərlərin uyğun icazə səviyyələri',
+        'Tələbələrin aktivlik dinamikasının analizi',
+        'Avtomatik davamiyyət hesabatları',
       ],
     },
     {
@@ -64,7 +83,87 @@ const Landing: React.FC = () => {
       title: 'Komanda İdarəçiliyi və Roller',
       description:
         'Kiroku çox səviyyəli idarəetmə mexanizminə malikdir. Burada hər kəs öz roluna uyğun imkanlara sahib olur:',
-      list: ['Administrator', 'Filial rəhbəri', 'Müəllim', 'Tələbə'],
+      list: [
+        'Təşkilat Admini - Tam nəzarət',
+        'Filial Admini - Filial idarəçiliyi',
+        'Filial Meneceri - Əməliyyat idarəsi',
+        'Müəllim - Dərs və tələbə idarəsi',
+        'Tələbə - Şəxsi profil və materiallar',
+        'Valideyn - Uşaq məlumatlarının izlənməsi',
+      ],
+    },
+    {
+      icon: '💬',
+      title: 'Sorğular və Müraciətlər',
+      description:
+        'Potensial tələbələrdən gələn sorğuları sistemli şəkildə idarə edin və onları kurs qeydiyyatına çevirin.',
+      list: [
+        'Müraciətlərin qeydiyyatı',
+        'Status izləmə və yenilənməsi',
+        'Tələbə məlumatlarının saxlanması',
+        'Sorğudan qeydiyyata avtomatik keçid',
+        'Təşkilatın inkişaf dinamikasının analizi',
+      ],
+    },
+    {
+      icon: '📊',
+      title: 'Hesabatlar və Analitika',
+      description:
+        'Təşkilatınızın fəaliyyətini detallı statistika və hesabatlarla izləyin.',
+      list: [
+        'Filiallar üzrə ümumi statistika',
+        'Tələbə və müəllim saylarının monitorinqi',
+        'Kurs və qrup məlumatları',
+        'Davamiyyət hesabatları',
+        'İdarəetmə qərarları üçün analitik məlumatlar',
+      ],
+    },
+  ];
+
+  const roles = [
+    {
+      title: 'Təşkilat Admini',
+      icon: '👑',
+      description: 'Bütün sistem üzərində tam nəzarət və idarəetmə',
+      features: [
+        'Filial idarəsi',
+        'İstifadəçi rolları',
+        'Ümumi statistika',
+        'Sistem parametrləri',
+      ],
+    },
+    {
+      title: 'Filial Meneceri',
+      icon: '💼',
+      description: 'Filial səviyyəsində tədris proseslərinin idarəsi',
+      features: [
+        'Kurs idarəsi',
+        'Müəllim təyini',
+        'Qrup yaradılması',
+        'Davamiyyət nəzarəti',
+      ],
+    },
+    {
+      title: 'Müəllim',
+      icon: '👨‍🏫',
+      description: 'Dərslərin keçirilməsi və tələbə idarəsi',
+      features: [
+        'Davamiyyət qeydi',
+        'Material paylaşımı',
+        'Tələbə məlumatları',
+        'Dərs cədvəli',
+      ],
+    },
+    {
+      title: 'Tələbə',
+      icon: '👨‍🎓',
+      description: 'Şəxsi məlumatlar və tədris materiallarına çıxış',
+      features: [
+        'Profil məlumatları',
+        'Kurs materialları',
+        'Davamiyyət tarixi',
+        'Qiymətləndirmələr',
+      ],
     },
   ];
 
@@ -74,12 +173,17 @@ const Landing: React.FC = () => {
     '✅ Davamiyyət, kurslar, materiallar və şəxsi məlumatlar vahid mərkəzdə',
     '✅ Genişlənə bilən və gələcək funksiyalara açıq sistem',
     '✅ Onlayn və hibrid tədris modelini tam dəstəkləyir',
+    '✅ Bulud əsaslı və təhlükəsiz infrastruktur',
+    '✅ Mobil cihazlarla tam uyğunlaşma',
+    '✅ 7/24 texniki dəstək',
   ];
 
   return (
     <div className={styles.landing}>
       {/* Header */}
-      <header className={styles.header}>
+      <header
+        className={`${styles.header} ${isVisible ? styles.headerVisible : ''}`}
+      >
         <div className={styles.headerContent}>
           <div className={styles.logo} onClick={() => navigate('/')}>
             <img
@@ -96,30 +200,71 @@ const Landing: React.FC = () => {
 
       {/* Hero Section */}
       <section className={styles.hero}>
-        <div className={styles.heroContent}>
+        <div
+          className={`${styles.heroContent} ${isVisible ? styles.fadeInUp : ''}`}
+        >
+          <div className={styles.heroBadge}>
+            <span className={styles.badgeIcon}>✨</span>
+            Müasir Tədris Həlli
+          </div>
           <h1 className={styles.heroTitle}>
-            Müasir Tədris və Kurs İdarəetmə Sistemi
+            Tədris və Kurs İdarəetməsini
+            <span className={styles.gradientText}> Sadələşdirin</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Bugünün sürətlə dəyişən dünyasında təhsil müəssisələri, kurs
-            mərkəzləri və təlim platformaları üçün idarəetmə proseslərinin
-            səlis, şəffaf və rahat şəkildə aparılması çox vacibdir. Kiroku –
-            məhz bu ehtiyacdan doğan, sadə interfeysə və güclü funksionallığa
-            malik öyrənmə və kurs idarəetmə sistemidir.
+            Kiroku – təhsil müəssisələri, kurs mərkəzləri və təlim platformaları
+            üçün tam funksional idarəetmə sistemi. Filiallarınızı, kurslarınızı,
+            müəllimlərinizi və tələbələrinizi vahid platformada idarə edin.
           </p>
-          <button className={styles.heroCta} onClick={handleLoginClick}>
-            İndi Başlayın
-          </button>
+          <div className={styles.heroButtons}>
+            <button className={styles.heroCta} onClick={handleLoginClick}>
+              İndi Başlayın
+              <span className={styles.arrowIcon}>→</span>
+            </button>
+            <button
+              className={styles.heroSecondary}
+              onClick={() => {
+                document
+                  .getElementById('features')
+                  ?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Ətraflı Məlumat
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Statistics Section */}
+      <section className={`${styles.statistics} ${styles.animateOnScroll}`}>
+        <div className={styles.statisticsContent}>
+          <div className={styles.statsGrid}>
+            {statistics.map((stat, index) => (
+              <div key={index} className={styles.statCard}>
+                <div className={styles.statIcon}>{stat.icon}</div>
+                <div className={styles.statValue}>{stat.value}</div>
+                <div className={styles.statLabel}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className={styles.features}>
+      <section id="features" className={styles.features}>
         <div className={styles.featuresContent}>
-          <h2 className={styles.sectionTitle}>Əsas Xüsusiyyətlər</h2>
+          <div className={`${styles.sectionHeader} ${styles.animateOnScroll}`}>
+            <h2 className={styles.sectionTitle}>Əsas Xüsusiyyətlər</h2>
+            <p className={styles.sectionSubtitle}>
+              Kiroku ilə tədris proseslərinizi tam nəzarət altında saxlayın
+            </p>
+          </div>
           <div className={styles.featuresGrid}>
             {features.map((feature, index) => (
-              <div key={index} className={styles.featureCard}>
+              <div
+                key={index}
+                className={`${styles.featureCard} ${styles.animateOnScroll}`}
+              >
                 <div className={styles.featureIcon}>{feature.icon}</div>
                 <h3 className={styles.featureTitle}>{feature.title}</h3>
                 <p className={styles.featureDescription}>
@@ -136,13 +281,52 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* Roles Section */}
+      <section className={styles.roles}>
+        <div className={styles.rolesContent}>
+          <div className={`${styles.sectionHeader} ${styles.animateOnScroll}`}>
+            <h2 className={styles.sectionTitle}>
+              Hər Kəs Üçün Xüsusi İmkanlar
+            </h2>
+            <p className={styles.sectionSubtitle}>
+              İstifadəçi roluna görə fərqli səlahiyyət və funksiyalar
+            </p>
+          </div>
+          <div className={styles.rolesGrid}>
+            {roles.map((role, index) => (
+              <div
+                key={index}
+                className={`${styles.roleCard} ${styles.animateOnScroll}`}
+              >
+                <div className={styles.roleIcon}>{role.icon}</div>
+                <h3 className={styles.roleTitle}>{role.title}</h3>
+                <p className={styles.roleDescription}>{role.description}</p>
+                <ul className={styles.roleFeatures}>
+                  {role.features.map((feature, idx) => (
+                    <li key={idx}>{feature}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Benefits Section */}
       <section className={styles.benefits}>
         <div className={styles.benefitsContent}>
-          <h2 className={styles.sectionTitle}>Niyə Kiroku?</h2>
+          <div className={`${styles.sectionHeader} ${styles.animateOnScroll}`}>
+            <h2 className={styles.sectionTitle}>Niyə Kiroku?</h2>
+            <p className={styles.sectionSubtitle}>
+              Təhsil idarəçiliyində yeni standart
+            </p>
+          </div>
           <div className={styles.benefitsGrid}>
             {benefits.map((benefit, index) => (
-              <div key={index} className={styles.benefitItem}>
+              <div
+                key={index}
+                className={`${styles.benefitItem} ${styles.animateOnScroll}`}
+              >
                 <span className={styles.benefitIcon}>✓</span>
                 <span className={styles.benefitText}>
                   {benefit.replace('✅ ', '')}
@@ -155,17 +339,16 @@ const Landing: React.FC = () => {
 
       {/* CTA Section */}
       <section className={styles.cta}>
-        <div className={styles.ctaContent}>
-          <h2 className={styles.ctaTitle}>
-            Tədris İdarəçiliyini Sadələşdirin – Kiroku ilə
-          </h2>
+        <div className={`${styles.ctaContent} ${styles.animateOnScroll}`}>
+          <h2 className={styles.ctaTitle}>Hazırsınızsa, İndi Başlayın</h2>
           <p className={styles.ctaDescription}>
             Kiroku sizin təhsil müəssisənizin daxili idarəetməsini gücləndirir,
             təlim keyfiyyətini artırır və vaxtınıza qənaət edir. Fokusunuzu
             sənədləşməyə deyil – həqiqi tədris prosesinə yönəldin.
           </p>
           <button className={styles.ctaButton} onClick={handleLoginClick}>
-            İndi Başlayın
+            <span>İndi Başlayın</span>
+            <span className={styles.arrowIcon}>→</span>
           </button>
         </div>
       </section>
@@ -173,7 +356,9 @@ const Landing: React.FC = () => {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
-          <p>© 2025 Kiroku. Bütün hüquqlar qorunur.</p>
+          <div className={styles.footerBottom}>
+            <p>© 2025 Kiroku. Bütün hüquqlar qorunur.</p>
+          </div>
         </div>
       </footer>
     </div>
