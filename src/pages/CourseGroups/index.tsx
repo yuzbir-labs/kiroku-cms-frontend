@@ -49,6 +49,8 @@ const CourseGroups: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<
     CourseGroupStatus | undefined
   >();
+  const [branchFilter, setBranchFilter] = useState<number | undefined>();
+  const [teacherFilter, setTeacherFilter] = useState<number[] | undefined>();
   const [modalVisible, setModalVisible] = useState(false);
   const [editingGroup, setEditingGroup] = useState<CourseGroup | null>(null);
   const [form] = Form.useForm();
@@ -58,12 +60,20 @@ const CourseGroups: React.FC = () => {
     Number(courseId)
   );
 
+  // Build query params
+  const queryParams = {
+    search: searchTerm || undefined,
+    status: statusFilter,
+    branch: branchFilter,
+    teacher_ids: teacherFilter?.join(','),
+  };
+
   // Queries and mutations
   const {
     data: groups,
     isLoading,
     error,
-  } = useCourseGroupsByCourseQuery(Number(courseId));
+  } = useCourseGroupsByCourseQuery(Number(courseId), queryParams);
 
   const { data: teachers } = useUsersQuery({ user_type: 'TEACHER' });
   const { data: branches } = useBranchesQuery();
@@ -117,6 +127,8 @@ const CourseGroups: React.FC = () => {
 
       const payload = {
         ...values,
+        teacher_ids: values.teacher, // Rename teacher to teacher_ids
+        teacher: undefined, // Remove teacher field
         start_date: values.start_date.format('YYYY-MM-DD'),
         end_date: values.end_date.format('YYYY-MM-DD'),
         schedule: scheduleData,
@@ -181,15 +193,6 @@ const CourseGroups: React.FC = () => {
     SATURDAY: 'Şənbə',
     SUNDAY: 'Bazar',
   };
-
-  const filteredGroups = groups?.filter((group) => {
-    const matchesSearch =
-      !searchTerm ||
-      group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      group.code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = !statusFilter || group.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
 
   const columns = [
     {
@@ -360,6 +363,31 @@ const CourseGroups: React.FC = () => {
               { label: 'Tamamlanıb', value: 'COMPLETED' },
               { label: 'Ləğv edilib', value: 'CANCELLED' },
             ],
+            allowClear: true,
+          },
+          branch: {
+            type: 'select',
+            placeholder: 'Filial',
+            value: branchFilter,
+            onChange: (value) => setBranchFilter(value as number | undefined),
+            options: branches?.map((b) => ({
+              label: b.name,
+              value: b.id,
+            })),
+            allowClear: true,
+          },
+          teacher: {
+            type: 'select',
+            placeholder: 'Müəllim',
+            value: teacherFilter,
+            onChange: (value) =>
+              setTeacherFilter(value as number[] | undefined),
+            options: teachers?.map((t) => ({
+              label: t.full_name,
+              value: t.id,
+            })),
+            mode: 'multiple',
+            allowClear: true,
           },
         }}
       />
@@ -372,7 +400,7 @@ const CourseGroups: React.FC = () => {
         ) : (
           <Table
             columns={columns}
-            dataSource={filteredGroups}
+            dataSource={groups}
             rowKey="id"
             pagination={{
               pageSize: 10,

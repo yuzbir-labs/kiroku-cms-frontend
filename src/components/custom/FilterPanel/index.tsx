@@ -6,10 +6,11 @@ import styles from './FilterPanel.module.css';
 interface FilterItem {
   type: 'input' | 'select';
   placeholder?: string;
-  value: string | number | boolean | undefined;
-  onChange: (value: string | number | boolean | undefined) => void;
+  value: string | number | boolean | number[] | undefined;
+  onChange: (value: string | number | boolean | number[] | undefined) => void;
   options?: DefaultOptionType[];
   allowClear?: boolean;
+  mode?: 'multiple' | 'tags';
 }
 
 interface FilterPanelProps {
@@ -36,6 +37,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters }) => {
                 onChange={filter.onChange}
                 options={filter.options}
                 allowClear={filter.allowClear !== false}
+                mode={filter.mode}
                 style={{ width: '100%' }}
               />
             )}

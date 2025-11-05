@@ -94,7 +94,7 @@ export interface CourseGroupCreate {
   branch: number;
   name: string;
   code: string;
-  teacher: number[];
+  teacher_ids: number[];
   max_students: number;
   monthly_price: string;
   schedule: CourseGroupSchedule[];
@@ -108,7 +108,7 @@ export interface CourseGroupUpdate {
   branch?: number;
   name?: string;
   code?: string;
-  teacher?: number[];
+  teacher_ids?: number[];
   max_students?: number;
   monthly_price?: string;
   schedule?: CourseGroupSchedule[];
@@ -116,6 +116,13 @@ export interface CourseGroupUpdate {
   end_date?: string;
   status?: CourseGroupStatus;
   notes?: string;
+}
+
+export interface CourseGroupListParams {
+  branch?: number;
+  search?: string;
+  status?: CourseGroupStatus;
+  teacher_ids?: string; // Comma-separated list like "1,2,3"
 }
 
 export interface MyGroupsResponse {

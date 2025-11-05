@@ -4,6 +4,7 @@ import type {
   Course,
   CourseListParams,
   CourseGroup,
+  CourseGroupListParams,
   MyGroupsResponse,
 } from './types';
 
@@ -18,8 +19,11 @@ const fetchCourse = async (id: number): Promise<Course> => {
   return response.data;
 };
 
-const fetchCourseGroups = async (id: number): Promise<CourseGroup[]> => {
-  const response = await api.get(`/courses/${id}/groups/`);
+const fetchCourseGroups = async (
+  id: number,
+  params?: CourseGroupListParams
+): Promise<CourseGroup[]> => {
+  const response = await api.get(`/courses/${id}/groups/`, { params });
   return response.data;
 };
 
@@ -46,10 +50,13 @@ export const useCourseQuery = (id: number) => {
   })();
 };
 
-export const useCourseGroupsByCourseQuery = (id: number) => {
+export const useCourseGroupsByCourseQuery = (
+  id: number,
+  params?: CourseGroupListParams
+) => {
   return createQuery<CourseGroup[]>({
-    queryKey: ['courses', 'groups', id],
-    queryFn: () => fetchCourseGroups(id),
+    queryKey: ['courses', 'groups', id, JSON.stringify(params)],
+    queryFn: () => fetchCourseGroups(id, params),
     options: {
       enabled: !!id,
     },
