@@ -51,7 +51,19 @@ const Login: React.FC = () => {
   return (
     <div className={styles.loginContainer}>
       {contextHolder}
-      <Card title="Xoş gəlmisiniz" className={styles.loginCard}>
+      <Card className={styles.loginCard} bordered={false}>
+        <div className={styles.logoSection}>
+          <img
+            src="/kiroku-icon.svg"
+            alt="Kiroku"
+            className={styles.logoImage}
+          />
+          <h1 className={styles.projectName}>Kiroku</h1>
+        </div>
+        <h2 className={styles.cardTitle}>Xoş gəlmisiniz</h2>
+        <p className={styles.cardSubtitle}>
+          Davam etmək üçün hesabınıza daxil olun
+        </p>
         <Form
           form={form}
           name="login"

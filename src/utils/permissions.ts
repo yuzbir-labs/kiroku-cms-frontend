@@ -191,7 +191,7 @@ export const canViewAttendance = (user: User | null | undefined): boolean => {
 
 /**
  * Check if user can create enrollments
- * Organization Admin, Branch Admin, Branch Manager, Teacher
+ * Only Organization Admin, Branch Admin, and Branch Manager
  */
 export const canCreateEnrollments = (
   user: User | null | undefined
@@ -200,13 +200,12 @@ export const canCreateEnrollments = (
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
     UserRoles.BRANCH_MANAGER,
-    UserRoles.TEACHER,
   ]);
 };
 
 /**
  * Check if user can update enrollments
- * Organization Admin, Branch Admin, Branch Manager, Teacher
+ * Only Organization Admin, Branch Admin, and Branch Manager
  */
 export const canUpdateEnrollments = (
   user: User | null | undefined
@@ -215,13 +214,12 @@ export const canUpdateEnrollments = (
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
     UserRoles.BRANCH_MANAGER,
-    UserRoles.TEACHER,
   ]);
 };
 
 /**
  * Check if user can delete enrollments
- * Organization Admin, Branch Admin, Branch Manager, Teacher
+ * Only Organization Admin, Branch Admin, and Branch Manager
  */
 export const canDeleteEnrollments = (
   user: User | null | undefined
@@ -230,20 +228,18 @@ export const canDeleteEnrollments = (
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
     UserRoles.BRANCH_MANAGER,
-    UserRoles.TEACHER,
   ]);
 };
 
 /**
  * Check if user can view enrollments
- * Admins, Managers, and Teachers can view enrollments (not students or parents)
+ * Only Organization Admin, Branch Admin, and Branch Manager can view enrollments
  */
 export const canViewEnrollments = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
     UserRoles.BRANCH_MANAGER,
-    UserRoles.TEACHER,
   ]);
 };
 

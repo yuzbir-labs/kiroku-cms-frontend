@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, Button, Dropdown, Avatar, Space, message } from 'antd';
 import type { MenuProps } from 'antd';
 import {
@@ -8,7 +8,9 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCurrentUserQuery, useLogoutMutation } from '../../api';
+import { Loading } from '../../components';
 import styles from './Header.module.css';
 
 const { Header: AntHeader } = Layout;
@@ -19,16 +21,26 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data: user } = useCurrentUserQuery();
   const logoutMutation = useLogoutMutation(messageApi);
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
+      // Call logout API
       await logoutMutation.mutateAsync();
-      navigate('/login');
+      // Clear all queries from cache
+      queryClient.clear();
+      // Small delay to ensure cache is cleared
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Navigate to login
+      navigate('/login', { replace: true });
     } catch (error) {
       console.error('Logout failed:', error);
+      setIsLoggingOut(false);
     }
   };
 
@@ -50,6 +62,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       danger: true,
     },
   ];
+
+  if (isLoggingOut) {
+    return <Loading text="Çıxış edilir..." />;
+  }
 
   return (
     <AntHeader className={styles.header}>

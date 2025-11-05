@@ -69,3 +69,21 @@ export const useMyCourseGroupsQuery = () => {
     queryFn: fetchMyCourseGroups,
   })();
 };
+
+const fetchActiveUpcomingCourseGroups = async (
+  params?: CourseGroupListParams
+): Promise<CourseGroup[]> => {
+  const response = await api.get('/courses/groups/active-upcoming/', {
+    params,
+  });
+  return response.data;
+};
+
+export const useActiveUpcomingCourseGroupsQuery = (
+  params?: CourseGroupListParams
+) => {
+  return createQuery<CourseGroup[]>({
+    queryKey: ['courses', 'groups', 'active-upcoming', JSON.stringify(params)],
+    queryFn: () => fetchActiveUpcomingCourseGroups(params),
+  })();
+};

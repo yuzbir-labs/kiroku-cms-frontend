@@ -3,13 +3,56 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
 }
 
 .loginCard {
-  width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid #f0f0f0;
+}
+
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+}
+
+.logoImage {
+  width: 64px;
+  height: 64px;
+}
+
+.projectName {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Geist', sans-serif;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #171717;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.cardSubtitle {
+  font-size: 0.875rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .submitButton {

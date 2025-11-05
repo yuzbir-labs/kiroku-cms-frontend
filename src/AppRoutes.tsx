@@ -132,7 +132,7 @@ const AppRoutes: React.FC = () => {
         }
       />
 
-      {/* Protected Routes - Enrollments (Not for students) */}
+      {/* Protected Routes - Enrollments (Admins and Managers only) */}
       <Route
         path="/enrollments"
         element={
@@ -141,7 +141,6 @@ const AppRoutes: React.FC = () => {
               UserRoles.ORGANIZATION_ADMIN,
               UserRoles.BRANCH_ADMIN,
               UserRoles.BRANCH_MANAGER,
-              UserRoles.TEACHER,
             ]}
           >
             <Layout>

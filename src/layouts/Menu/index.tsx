@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Drawer, Menu as AntMenu, message, Avatar, Space } from 'antd';
 import {
   DashboardOutlined,
@@ -14,7 +14,9 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLogoutMutation, useCurrentUserQuery } from '../../api';
+import { Loading } from '../../components';
 import {
   canViewDashboard,
   canViewBranches,
@@ -37,27 +39,33 @@ interface MenuProps {
 const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data: user } = useCurrentUserQuery();
   const logoutMutation = useLogoutMutation(messageApi);
-
-  // Handle navigation after successful logout
-  useEffect(() => {
-    if (logoutMutation.isSuccess) {
-      setTimeout(() => {
-        navigate('/login');
-        onClose();
-      }, 500);
-    }
-  }, [logoutMutation.isSuccess, navigate, onClose]);
 
   const getSelectedKey = () => {
     return location.pathname;
   };
 
-  const handleMenuClick = (key: string) => {
+  const handleMenuClick = async (key: string) => {
     if (key === 'logout') {
-      logoutMutation.mutate();
+      try {
+        setIsLoggingOut(true);
+        // Call logout API
+        await logoutMutation.mutateAsync();
+        // Clear all queries from cache
+        queryClient.clear();
+        // Small delay to ensure cache is cleared
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        // Close menu and navigate to login
+        onClose();
+        navigate('/login', { replace: true });
+      } catch (error) {
+        console.error('Logout failed:', error);
+        setIsLoggingOut(false);
+      }
     } else {
       onMenuClick(key);
     }
@@ -157,6 +165,10 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
       danger: true,
     },
   ];
+
+  if (isLoggingOut) {
+    return <Loading text="Çıxış edilir..." />;
+  }
 
   return (
     <Drawer

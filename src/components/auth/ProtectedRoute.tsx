@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useCurrentUserQuery } from '../../api';
 import { hasAnyRole, isAuthenticated } from '../../utils/permissions';
 import type { UserType } from '../../api/auth/types';
-import { Spin } from 'antd';
+import { Loading } from '../common';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -35,18 +35,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Show loading spinner while checking authentication
   if (isLoading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <Spin size="large" />
-      </div>
-    );
+    return <Loading text="Yoxlanılır..." />;
   }
 
   // Check if authentication is required

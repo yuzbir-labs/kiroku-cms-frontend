@@ -61,14 +61,15 @@ export const useLoginMutation = createMutation<LoginResponse, LoginRequest>({
   mutationFn: login,
   invalidateKeys: ['auth'],
   onSuccessMessage: 'Giriş uğurlu oldu!',
-  onErrorMessage: (
-    error: Error & { response?: { data?: { detail?: string } } }
-  ) => error.response?.data?.detail || 'Giriş zamanı xəta baş verdi',
+  onErrorMessage: (error: unknown) => {
+    const err = error as Error & { response?: { data?: { detail?: string } } };
+    return err.response?.data?.detail || 'Giriş zamanı xəta baş verdi';
+  },
 });
 
 export const useLogoutMutation = createMutation<MessageResponse, void>({
   mutationFn: logout,
-  invalidateKeys: [],
+  invalidateKeys: ['auth'], // Invalidate auth cache on logout
   onSuccessMessage: 'Çıxış uğurlu oldu!',
   onErrorMessage: 'Çıxış zamanı xəta baş verdi',
 });

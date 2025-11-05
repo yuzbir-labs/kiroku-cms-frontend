@@ -81,7 +81,6 @@ const ResetPassword: React.FC = () => {
     try {
       await confirmResetMutation.mutateAsync({
         token,
-        email,
         new_password: values.new_password,
         confirm_password: values.confirm_password,
       });
@@ -298,7 +297,17 @@ const ResetPassword: React.FC = () => {
   return (
     <div className={styles.resetPasswordContainer}>
       {contextHolder}
-      <Card className={styles.resetPasswordCard}>{renderContent()}</Card>
+      <Card className={styles.resetPasswordCard} bordered={false}>
+        <div className={styles.logoSection}>
+          <img
+            src="/kiroku-icon.svg"
+            alt="Kiroku"
+            className={styles.logoImage}
+          />
+          <h1 className={styles.projectName}>Kiroku</h1>
+        </div>
+        {renderContent()}
+      </Card>
     </div>
   );
 };

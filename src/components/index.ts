@@ -6,3 +6,6 @@ export * from './custom';
 
 // Re-export all auth components
 export * from './auth';
+
+// Re-export all common components
+export * from './common';

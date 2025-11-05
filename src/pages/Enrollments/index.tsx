@@ -25,6 +25,8 @@ import {
   useDeleteEnrollmentMutation,
   useCompleteEnrollmentMutation,
   useDropEnrollmentMutation,
+  useUsersQuery,
+  useActiveUpcomingCourseGroupsQuery,
   type Enrollment,
   type EnrollmentCreate,
   type EnrollmentStatus,
@@ -52,6 +54,9 @@ const Enrollments: React.FC = () => {
     search: searchTerm || undefined,
     status: statusFilter,
   });
+
+  const { data: students } = useUsersQuery({ user_type: 'STUDENT' });
+  const { data: courseGroups } = useActiveUpcomingCourseGroupsQuery();
 
   const createMutation = useCreateEnrollmentMutation(messageApi);
   const updateMutation = usePartialUpdateEnrollmentMutation(messageApi);
@@ -86,6 +91,17 @@ const Enrollments: React.FC = () => {
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
+
+      // Get the selected group to populate monthly_price if creating
+      if (!editingEnrollment && values.course_group) {
+        const selectedGroup = courseGroups?.find(
+          (g) => g.id === values.course_group
+        );
+        if (selectedGroup && !values.monthly_price) {
+          values.monthly_price = selectedGroup.monthly_price;
+        }
+      }
+
       if (editingEnrollment) {
         updateMutation.mutate(
           { id: editingEnrollment.id, data: values },
@@ -136,8 +152,6 @@ const Enrollments: React.FC = () => {
       title: 'Tələbə',
       dataIndex: 'student_name',
       key: 'student_name',
-      sorter: (a: Enrollment, b: Enrollment) =>
-        a.student_name.localeCompare(b.student_name),
     },
     {
       title: 'Kurs',
@@ -265,13 +279,14 @@ const Enrollments: React.FC = () => {
             type: 'input',
             placeholder: 'Tələbə axtar...',
             value: searchTerm,
-            onChange: setSearchTerm,
+            onChange: (value) => setSearchTerm((value as string) || ''),
           },
           status: {
             type: 'select',
             placeholder: 'Status',
             value: statusFilter,
-            onChange: setStatusFilter,
+            onChange: (value) =>
+              setStatusFilter(value as EnrollmentStatus | undefined),
             options: [
               { label: 'Gözləyir', value: 'PENDING' },
               { label: 'Aktiv', value: 'ACTIVE' },
@@ -279,6 +294,7 @@ const Enrollments: React.FC = () => {
               { label: 'Ləğv edilib', value: 'DROPPED' },
               { label: 'Dayandırılıb', value: 'SUSPENDED' },
             ],
+            allowClear: true,
           },
         }}
       />
@@ -318,24 +334,51 @@ const Enrollments: React.FC = () => {
             <>
               <Form.Item
                 name="student"
-                label="Tələbə ID"
-                rules={[{ required: true, message: 'Tələbə ID daxil edin' }]}
+                label="Tələbə"
+                rules={[{ required: true, message: 'Tələbə seçin' }]}
               >
-                <Input type="number" />
+                <Select
+                  showSearch
+                  placeholder="Tələbə seçin"
+                  optionFilterProp="label"
+                  options={students?.map((s) => ({
+                    label: `${s.full_name} (${s.email})`,
+                    value: s.id,
+                  }))}
+                />
               </Form.Item>
               <Form.Item
                 name="course_group"
-                label="Qrup ID"
-                rules={[{ required: true, message: 'Qrup ID daxil edin' }]}
-                tooltip="Qrup seçmək üçün qrup ID-ni daxil edin. Qrup məlumatlarını Kurslar səhifəsindən əldə edə bilərsiniz."
+                label="Kurs Qrupu"
+                rules={[{ required: true, message: 'Qrup seçin' }]}
+                tooltip="Yalnız ACTIVE və ya UPCOMING statuslu qruplar göstərilir"
               >
-                <Input type="number" placeholder="Qrup ID daxil edin" />
+                <Select
+                  showSearch
+                  placeholder="Qrup seçin"
+                  optionFilterProp="label"
+                  options={courseGroups?.map((g) => ({
+                    label: `${g.course_name} - ${g.name} (${g.branch_name})`,
+                    value: g.id,
+                  }))}
+                  onChange={(value) => {
+                    const selectedGroup = courseGroups?.find(
+                      (g) => g.id === value
+                    );
+                    if (selectedGroup) {
+                      form.setFieldValue(
+                        'monthly_price',
+                        selectedGroup.monthly_price
+                      );
+                    }
+                  }}
+                />
               </Form.Item>
             </>
           )}
           <Form.Item
             name="monthly_price"
-            label="Aylıq qiymət"
+            label="Aylıq qiymət (AZN)"
             rules={[{ required: true, message: 'Aylıq qiymət daxil edin' }]}
           >
             <Input type="number" step="0.01" min={0} />
