@@ -82,7 +82,7 @@ const AppRoutes: React.FC = () => {
         }
       />
 
-      {/* Protected Routes - Course Groups (Admins, Managers, Teachers) */}
+      {/* Protected Routes - Course Groups (Admins and Managers only) */}
       <Route
         path="/courses/:courseId/groups"
         element={
@@ -91,7 +91,6 @@ const AppRoutes: React.FC = () => {
               UserRoles.ORGANIZATION_ADMIN,
               UserRoles.BRANCH_ADMIN,
               UserRoles.BRANCH_MANAGER,
-              UserRoles.TEACHER,
             ]}
           >
             <Layout>

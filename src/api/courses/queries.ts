@@ -1,6 +1,11 @@
 import { createQuery } from '../../config';
 import api from '../../config/api';
-import type { Course, CourseListParams, CourseGroup } from './types';
+import type {
+  Course,
+  CourseListParams,
+  CourseGroup,
+  MyGroupsResponse,
+} from './types';
 
 // API functions
 const fetchCourses = async (params?: CourseListParams): Promise<Course[]> => {
@@ -18,7 +23,7 @@ const fetchCourseGroups = async (id: number): Promise<CourseGroup[]> => {
   return response.data;
 };
 
-const fetchMyCourseGroups = async (): Promise<CourseGroup[]> => {
+const fetchMyCourseGroups = async (): Promise<MyGroupsResponse> => {
   const response = await api.get('/courses/my-groups/');
   return response.data;
 };
@@ -52,7 +57,7 @@ export const useCourseGroupsByCourseQuery = (id: number) => {
 };
 
 export const useMyCourseGroupsQuery = () => {
-  return createQuery<CourseGroup[]>({
+  return createQuery<MyGroupsResponse>({
     queryKey: ['courses', 'my-groups'],
     queryFn: fetchMyCourseGroups,
   })();

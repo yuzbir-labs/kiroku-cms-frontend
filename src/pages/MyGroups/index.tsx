@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { message, Spin, Alert, Tag, Card, Row, Col } from 'antd';
+import { Spin, Alert, Tag, Card, Row, Col } from 'antd';
 import {
   BookOutlined,
   UserOutlined,
   CalendarOutlined,
-  DollarOutlined,
 } from '@ant-design/icons';
 import { PageHeader, FilterPanel } from '../../components/custom';
 import { Table } from '../../components/restyled';
@@ -13,19 +12,21 @@ import {
   useCurrentUserQuery,
   type CourseGroup,
   type CourseGroupStatus,
+  type DayOfWeek,
 } from '../../api';
 import { UserRoles } from '../../utils/permissions';
 import styles from './MyGroups.module.css';
 
 const MyGroups: React.FC = () => {
-  const [messageApi, contextHolder] = message.useMessage();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<
     CourseGroupStatus | undefined
   >();
 
   const { data: user } = useCurrentUserQuery();
-  const { data: groups, isLoading, error } = useMyCourseGroupsQuery();
+  const { data: myGroupsData, isLoading, error } = useMyCourseGroupsQuery();
+
+  const groups = myGroupsData?.groups;
 
   const statusLabels: Record<CourseGroupStatus, string> = {
     UPCOMING: 'Gələcək',
@@ -39,6 +40,16 @@ const MyGroups: React.FC = () => {
     ACTIVE: 'success',
     COMPLETED: 'blue',
     CANCELLED: 'error',
+  };
+
+  const dayLabels: Record<DayOfWeek, string> = {
+    MONDAY: 'Bazar ertəsi',
+    TUESDAY: 'Çərşənbə axşamı',
+    WEDNESDAY: 'Çərşənbə',
+    THURSDAY: 'Cümə axşamı',
+    FRIDAY: 'Cümə',
+    SATURDAY: 'Şənbə',
+    SUNDAY: 'Bazar',
   };
 
   const filteredGroups = groups?.filter((group) => {
@@ -57,8 +68,6 @@ const MyGroups: React.FC = () => {
       title: 'Kurs',
       dataIndex: 'course_name',
       key: 'course_name',
-      sorter: (a: CourseGroup, b: CourseGroup) =>
-        a.course_name.localeCompare(b.course_name),
     },
     {
       title: 'Qrup',
@@ -71,6 +80,11 @@ const MyGroups: React.FC = () => {
       key: 'code',
     },
     {
+      title: 'Filial',
+      dataIndex: 'branch_name',
+      key: 'branch_name',
+    },
+    {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -80,8 +94,16 @@ const MyGroups: React.FC = () => {
     },
     {
       title: 'Cədvəl',
-      dataIndex: 'schedule_display',
-      key: 'schedule_display',
+      key: 'schedule',
+      render: (_: unknown, record: CourseGroup) => (
+        <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+          {record.schedule.map((s, idx) => (
+            <div key={idx}>
+              <strong>{dayLabels[s.day]}:</strong> {s.start_time}-{s.end_time}
+            </div>
+          ))}
+        </div>
+      ),
     },
     {
       title: 'Tələbələr',
@@ -113,8 +135,6 @@ const MyGroups: React.FC = () => {
       title: 'Kurs',
       dataIndex: 'course_name',
       key: 'course_name',
-      sorter: (a: CourseGroup, b: CourseGroup) =>
-        a.course_name.localeCompare(b.course_name),
     },
     {
       title: 'Qrup',
@@ -122,9 +142,22 @@ const MyGroups: React.FC = () => {
       key: 'name',
     },
     {
+      title: 'Filial',
+      dataIndex: 'branch_name',
+      key: 'branch_name',
+    },
+    {
       title: 'Müəllim',
-      dataIndex: 'teacher_name',
-      key: 'teacher_name',
+      key: 'teacher',
+      render: (_: unknown, record: CourseGroup) => (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+          {record.teacher.map((t) => (
+            <Tag key={t.id} color="blue">
+              {t.full_name}
+            </Tag>
+          ))}
+        </div>
+      ),
     },
     {
       title: 'Status',
@@ -136,8 +169,16 @@ const MyGroups: React.FC = () => {
     },
     {
       title: 'Cədvəl',
-      dataIndex: 'schedule_display',
-      key: 'schedule_display',
+      key: 'schedule',
+      render: (_: unknown, record: CourseGroup) => (
+        <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+          {record.schedule.map((s, idx) => (
+            <div key={idx}>
+              <strong>{dayLabels[s.day]}:</strong> {s.start_time}-{s.end_time}
+            </div>
+          ))}
+        </div>
+      ),
     },
     {
       title: 'Başlama',
@@ -171,7 +212,6 @@ const MyGroups: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {contextHolder}
       <PageHeader
         title={
           user?.user_type === UserRoles.TEACHER

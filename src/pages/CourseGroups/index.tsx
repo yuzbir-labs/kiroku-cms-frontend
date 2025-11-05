@@ -31,6 +31,7 @@ import {
   useDeleteCourseGroupMutation,
   useUsersQuery,
   useCurrentUserQuery,
+  useBranchesQuery,
   type CourseGroup,
   type CourseGroupCreate,
   type CourseGroupStatus,
@@ -65,6 +66,7 @@ const CourseGroups: React.FC = () => {
   } = useCourseGroupsByCourseQuery(Number(courseId));
 
   const { data: teachers } = useUsersQuery({ user_type: 'TEACHER' });
+  const { data: branches } = useBranchesQuery();
 
   const createMutation = useCreateCourseGroupMutation(messageApi);
   const updateMutation = useUpdateCourseGroupMutation(messageApi);
@@ -81,12 +83,13 @@ const CourseGroups: React.FC = () => {
     setEditingGroup(record);
     const formValues = {
       ...record,
+      teacher: record.teacher.map((t) => t.id), // Extract teacher IDs
       start_date: dayjs(record.start_date),
       end_date: dayjs(record.end_date),
       schedule: record.schedule.map((s) => ({
         day: s.day,
-        start_time: dayjs(s.start_time, 'HH:mm'),
-        end_time: dayjs(s.end_time, 'HH:mm'),
+        start_time: dayjs(`2000-01-01 ${s.start_time}`),
+        end_time: dayjs(`2000-01-01 ${s.end_time}`),
       })),
     };
     form.setFieldsValue(formValues);
@@ -193,7 +196,6 @@ const CourseGroups: React.FC = () => {
       title: 'Ad',
       dataIndex: 'name',
       key: 'name',
-      sorter: (a: CourseGroup, b: CourseGroup) => a.name.localeCompare(b.name),
     },
     {
       title: 'Kod',
@@ -201,9 +203,22 @@ const CourseGroups: React.FC = () => {
       key: 'code',
     },
     {
+      title: 'Filial',
+      dataIndex: 'branch_name',
+      key: 'branch_name',
+    },
+    {
       title: 'Müəllim',
-      dataIndex: 'teacher_name',
-      key: 'teacher_name',
+      key: 'teacher',
+      render: (_: unknown, record: CourseGroup) => (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+          {record.teacher.map((t) => (
+            <Tag key={t.id} color="blue">
+              {t.full_name}
+            </Tag>
+          ))}
+        </div>
+      ),
     },
     {
       title: 'Status',
@@ -215,8 +230,16 @@ const CourseGroups: React.FC = () => {
     },
     {
       title: 'Cədvəl',
-      dataIndex: 'schedule_display',
-      key: 'schedule_display',
+      key: 'schedule',
+      render: (_: unknown, record: CourseGroup) => (
+        <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+          {record.schedule.map((s, idx) => (
+            <div key={idx}>
+              <strong>{dayLabels[s.day]}:</strong> {s.start_time}-{s.end_time}
+            </div>
+          ))}
+        </div>
+      ),
     },
     {
       title: 'Tələbələr',
@@ -385,6 +408,19 @@ const CourseGroups: React.FC = () => {
             rules={[{ required: true, message: 'Kod daxil edin' }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="branch"
+            label="Filial"
+            rules={[{ required: true, message: 'Filial seçin' }]}
+          >
+            <Select
+              options={branches?.map((b) => ({
+                label: b.name,
+                value: b.id,
+              }))}
+              placeholder="Filial seçin"
+            />
           </Form.Item>
           <Form.Item
             name="teacher"

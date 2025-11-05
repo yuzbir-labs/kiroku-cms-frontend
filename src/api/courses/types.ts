@@ -60,14 +60,20 @@ export interface CourseListParams {
   status?: CourseStatus;
 }
 
+export interface CourseGroupTeacher {
+  id: number;
+  full_name: string;
+}
+
 export interface CourseGroup {
   id: number;
   course: number;
   course_name: string;
+  branch: number;
+  branch_name: string;
   name: string;
   code: string;
-  teacher: number[];
-  teacher_name: string;
+  teacher: CourseGroupTeacher[];
   max_students: number;
   monthly_price: string;
   schedule: CourseGroupSchedule[];
@@ -85,6 +91,7 @@ export interface CourseGroup {
 }
 
 export interface CourseGroupCreate {
+  branch: number;
   name: string;
   code: string;
   teacher: number[];
@@ -98,6 +105,7 @@ export interface CourseGroupCreate {
 }
 
 export interface CourseGroupUpdate {
+  branch?: number;
   name?: string;
   code?: string;
   teacher?: number[];
@@ -108,4 +116,9 @@ export interface CourseGroupUpdate {
   end_date?: string;
   status?: CourseGroupStatus;
   notes?: string;
+}
+
+export interface MyGroupsResponse {
+  role: string;
+  groups: CourseGroup[];
 }

@@ -438,15 +438,15 @@ export const canEditField = (
 };
 
 /**
- * Check if user can view course groups
- * Organization Admin, Branch Admin, Branch Manager, Teacher
+ * Check if user can view course groups (management page)
+ * Organization Admin, Branch Admin, Branch Manager only
+ * Teachers use "My Groups" instead
  */
 export const canViewCourseGroups = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
     UserRoles.BRANCH_MANAGER,
-    UserRoles.TEACHER,
   ]);
 };
 
