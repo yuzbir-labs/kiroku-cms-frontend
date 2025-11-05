@@ -8,6 +8,7 @@ import {
   Popconfirm,
   Tag,
   Space,
+  DatePicker,
 } from 'antd';
 import {
   PlusOutlined,
@@ -16,7 +17,14 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
 import { PageHeader, FilterPanel } from '../../components/custom';
+
+// Configure dayjs plugins for Ant Design DatePicker
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 import { Table, Input, Select, Button } from '../../components/restyled';
 import {
   useEnrollmentsQuery,
@@ -39,10 +47,16 @@ const Enrollments: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<
     EnrollmentStatus | undefined
   >();
+  const [studentFilter, setStudentFilter] = useState<number | undefined>();
+  const [courseGroupFilter, setCourseGroupFilter] = useState<
+    number | undefined
+  >();
   const [modalVisible, setModalVisible] = useState(false);
   const [editingEnrollment, setEditingEnrollment] = useState<Enrollment | null>(
     null
   );
+  const [selectedStatus, setSelectedStatus] =
+    useState<EnrollmentStatus>('PENDING');
   const [form] = Form.useForm();
 
   // Queries and mutations
@@ -53,6 +67,8 @@ const Enrollments: React.FC = () => {
   } = useEnrollmentsQuery({
     search: searchTerm || undefined,
     status: statusFilter,
+    student: studentFilter,
+    course_group: courseGroupFilter,
   });
 
   const { data: students } = useUsersQuery({ user_type: 'STUDENT' });
@@ -66,13 +82,23 @@ const Enrollments: React.FC = () => {
 
   const handleCreate = () => {
     setEditingEnrollment(null);
+    setSelectedStatus('PENDING');
     form.resetFields();
     setModalVisible(true);
   };
 
   const handleEdit = (record: Enrollment) => {
     setEditingEnrollment(record);
-    form.setFieldsValue(record);
+    setSelectedStatus(record.status);
+    form.setFieldsValue({
+      ...record,
+      enrollment_date: record.enrollment_date
+        ? dayjs(record.enrollment_date)
+        : undefined,
+      completion_date: record.completion_date
+        ? dayjs(record.completion_date)
+        : undefined,
+    });
     setModalVisible(true);
   };
 
@@ -102,21 +128,34 @@ const Enrollments: React.FC = () => {
         }
       }
 
+      // Format dates if they exist
+      const payload = {
+        ...values,
+        enrollment_date: values.enrollment_date
+          ? dayjs(values.enrollment_date).format('YYYY-MM-DD')
+          : undefined,
+        completion_date: values.completion_date
+          ? dayjs(values.completion_date).format('YYYY-MM-DD')
+          : undefined,
+      };
+
       if (editingEnrollment) {
         updateMutation.mutate(
-          { id: editingEnrollment.id, data: values },
+          { id: editingEnrollment.id, data: payload },
           {
             onSuccess: () => {
               setModalVisible(false);
               form.resetFields();
+              setSelectedStatus('PENDING');
             },
           }
         );
       } else {
-        createMutation.mutate(values as EnrollmentCreate, {
+        createMutation.mutate(payload as EnrollmentCreate, {
           onSuccess: () => {
             setModalVisible(false);
             form.resetFields();
+            setSelectedStatus('PENDING');
           },
         });
       }
@@ -129,6 +168,7 @@ const Enrollments: React.FC = () => {
     setModalVisible(false);
     form.resetFields();
     setEditingEnrollment(null);
+    setSelectedStatus('PENDING');
   };
 
   const statusLabels: Record<EnrollmentStatus, string> = {
@@ -164,11 +204,6 @@ const Enrollments: React.FC = () => {
       key: 'course_group_name',
     },
     {
-      title: 'Müəllim',
-      dataIndex: 'teacher_name',
-      key: 'teacher_name',
-    },
-    {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -183,10 +218,36 @@ const Enrollments: React.FC = () => {
       render: (price: string) => `${price} AZN`,
     },
     {
-      title: 'Davamiyyət %',
-      dataIndex: 'attendance_percentage',
-      key: 'attendance_percentage',
-      render: (percentage: string) => (percentage ? `${percentage}%` : '-'),
+      title: 'Qeydiyyat tarixi',
+      dataIndex: 'enrollment_date',
+      key: 'enrollment_date',
+      render: (date: string) =>
+        date ? new Date(date).toLocaleDateString('az-AZ') : '-',
+    },
+    {
+      title: 'Tamamlanma tarixi',
+      dataIndex: 'completion_date',
+      key: 'completion_date',
+      render: (date: string) =>
+        date ? new Date(date).toLocaleDateString('az-AZ') : '-',
+    },
+    {
+      title: 'Qeydlər',
+      dataIndex: 'notes',
+      key: 'notes',
+      width: 150,
+      render: (notes: string) => (
+        <div
+          style={{
+            maxWidth: '150px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {notes || '-'}
+        </div>
+      ),
     },
     {
       title: 'Əməliyyatlar',
@@ -277,9 +338,34 @@ const Enrollments: React.FC = () => {
         filters={{
           search: {
             type: 'input',
-            placeholder: 'Tələbə axtar...',
+            placeholder: 'Tələbə, kurs və ya qrup axtar...',
             value: searchTerm,
             onChange: (value) => setSearchTerm((value as string) || ''),
+          },
+          student: {
+            type: 'select',
+            placeholder: 'Tələbə',
+            value: studentFilter,
+            onChange: (value) => setStudentFilter(value as number | undefined),
+            options: students?.map((s) => ({
+              label: s.full_name,
+              value: s.id,
+            })),
+            allowClear: true,
+            showSearch: true,
+          },
+          courseGroup: {
+            type: 'select',
+            placeholder: 'Qrup',
+            value: courseGroupFilter,
+            onChange: (value) =>
+              setCourseGroupFilter(value as number | undefined),
+            options: courseGroups?.map((g) => ({
+              label: `${g.course_name} - ${g.name}`,
+              value: g.id,
+            })),
+            allowClear: true,
+            showSearch: true,
           },
           status: {
             type: 'select',
@@ -314,7 +400,7 @@ const Enrollments: React.FC = () => {
               showSizeChanger: true,
               showTotal: (total) => `Cəmi: ${total}`,
             }}
-            scroll={{ x: 1400 }}
+            scroll={{ x: 1750 }}
           />
         )}
       </div>
@@ -383,8 +469,15 @@ const Enrollments: React.FC = () => {
           >
             <Input type="number" step="0.01" min={0} />
           </Form.Item>
-          <Form.Item name="status" label="Status" initialValue="PENDING">
+
+          <Form.Item
+            name="status"
+            label="Status"
+            initialValue="PENDING"
+            rules={[{ required: true, message: 'Status seçin' }]}
+          >
             <Select
+              onChange={(value) => setSelectedStatus(value as EnrollmentStatus)}
               options={[
                 { label: 'Gözləyir', value: 'PENDING' },
                 { label: 'Aktiv', value: 'ACTIVE' },
@@ -394,11 +487,52 @@ const Enrollments: React.FC = () => {
               ]}
             />
           </Form.Item>
-          <Form.Item name="grade" label="Qiymət">
-            <Input />
-          </Form.Item>
+
+          {selectedStatus === 'ACTIVE' && (
+            <Form.Item
+              name="enrollment_date"
+              label="Qeydiyyat tarixi"
+              rules={[{ required: true, message: 'Qeydiyyat tarixi seçin' }]}
+            >
+              <DatePicker
+                style={{ width: '100%' }}
+                format="DD.MM.YYYY"
+                placeholder="Tarix seçin"
+              />
+            </Form.Item>
+          )}
+
+          {(selectedStatus === 'COMPLETED' ||
+            selectedStatus === 'DROPPED' ||
+            selectedStatus === 'SUSPENDED') && (
+            <>
+              <Form.Item
+                name="enrollment_date"
+                label="Qeydiyyat tarixi"
+                rules={[{ required: true, message: 'Qeydiyyat tarixi seçin' }]}
+              >
+                <DatePicker
+                  style={{ width: '100%' }}
+                  format="DD.MM.YYYY"
+                  placeholder="Tarix seçin"
+                />
+              </Form.Item>
+              <Form.Item
+                name="completion_date"
+                label="Tamamlanma tarixi"
+                rules={[{ required: true, message: 'Tamamlanma tarixi seçin' }]}
+              >
+                <DatePicker
+                  style={{ width: '100%' }}
+                  format="DD.MM.YYYY"
+                  placeholder="Tarix seçin"
+                />
+              </Form.Item>
+            </>
+          )}
+
           <Form.Item name="notes" label="Qeydlər">
-            <Input.TextArea rows={3} />
+            <Input.TextArea rows={3} placeholder="İstəyə bağlı qeydlər..." />
           </Form.Item>
         </Form>
       </Modal>

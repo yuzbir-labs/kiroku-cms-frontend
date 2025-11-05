@@ -21,6 +21,12 @@ import {
   LockOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
+
+// Configure dayjs plugins for Ant Design DatePicker
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 import {
   useCurrentUserQuery,
   useUpdateProfileMutation,

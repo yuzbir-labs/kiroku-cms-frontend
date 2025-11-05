@@ -11,6 +11,7 @@ interface FilterItem {
   options?: DefaultOptionType[];
   allowClear?: boolean;
   mode?: 'multiple' | 'tags';
+  showSearch?: boolean;
 }
 
 interface FilterPanelProps {
@@ -38,6 +39,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters }) => {
                 options={filter.options}
                 allowClear={filter.allowClear !== false}
                 mode={filter.mode}
+                showSearch={filter.showSearch}
+                optionFilterProp={filter.showSearch ? 'label' : undefined}
                 style={{ width: '100%' }}
               />
             )}

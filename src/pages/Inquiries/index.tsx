@@ -18,7 +18,13 @@ import {
   UserSwitchOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
 import { PageHeader, FilterPanel } from '../../components/custom';
+
+// Configure dayjs plugins for Ant Design DatePicker
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 import { Table, Input, Select, Button } from '../../components/restyled';
 import {
   useInquiriesQuery,

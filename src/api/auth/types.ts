@@ -13,7 +13,6 @@ export interface LoginResponse {
 export type UserType =
   | 'NOT_SET'
   | 'STUDENT'
-  | 'PARENT'
   | 'TEACHER'
   | 'BRANCH_MANAGER'
   | 'BRANCH_ADMIN'

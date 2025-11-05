@@ -12,7 +12,13 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
 import { PageHeader, FilterPanel } from '../../components/custom';
+
+// Configure dayjs plugins for Ant Design DatePicker
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 import {
   Table,
   Input,
@@ -120,7 +126,6 @@ const Users: React.FC = () => {
   const userTypeLabels: Record<UserType, string> = {
     NOT_SET: 'Təyin edilməyib',
     STUDENT: 'Tələbə',
-    PARENT: 'Valideyn',
     TEACHER: 'Müəllim',
     BRANCH_MANAGER: 'Filial Meneceri',
     BRANCH_ADMIN: 'Filial Admini',
@@ -130,7 +135,6 @@ const Users: React.FC = () => {
   const userTypeColors: Record<UserType, string> = {
     NOT_SET: 'default',
     STUDENT: 'blue',
-    PARENT: 'cyan',
     TEACHER: 'green',
     BRANCH_MANAGER: 'orange',
     BRANCH_ADMIN: 'purple',
@@ -318,7 +322,6 @@ const Users: React.FC = () => {
               options={[
                 { label: 'Təyin edilməyib', value: 'NOT_SET' },
                 { label: 'Tələbə', value: 'STUDENT' },
-                { label: 'Valideyn', value: 'PARENT' },
                 { label: 'Müəllim', value: 'TEACHER' },
                 { label: 'Filial Meneceri', value: 'BRANCH_MANAGER' },
                 { label: 'Filial Admini', value: 'BRANCH_ADMIN' },

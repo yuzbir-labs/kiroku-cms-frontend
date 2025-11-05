@@ -17,8 +17,6 @@ export interface Enrollment {
   monthly_price: string;
   enrollment_date: string;
   completion_date: string | null;
-  grade: string | null;
-  attendance_percentage: string;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -29,20 +27,16 @@ export interface EnrollmentCreate {
   course_group: number;
   status?: EnrollmentStatus;
   monthly_price: string;
-  completion_date?: string | null;
-  grade?: string | null;
-  attendance_percentage?: string;
+  enrollment_date?: string;
+  completion_date?: string;
   notes?: string | null;
 }
 
 export interface EnrollmentUpdate {
-  student?: number;
-  course_group?: number;
   status?: EnrollmentStatus;
   monthly_price?: string;
-  completion_date?: string | null;
-  grade?: string | null;
-  attendance_percentage?: string;
+  enrollment_date?: string;
+  completion_date?: string;
   notes?: string | null;
 }
 
