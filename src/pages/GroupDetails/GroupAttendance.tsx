@@ -3,40 +3,30 @@ import { useNavigate } from 'react-router-dom';
 import { Modal, Form, message, Spin, Alert, Tag, Space, DatePicker, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import weekday from 'dayjs/plugin/weekday';
-import localeData from 'dayjs/plugin/localeData';
-import { PageHeader, FilterPanel } from '../../components/custom';
-
-// Configure dayjs plugins for Ant Design DatePicker
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 import { Table, Input, Button } from '../../components/restyled';
 import {
-  useAttendanceSessionsQuery,
+  useAttendanceSessionsByCourseGroupQuery,
   useCreateAttendanceSessionMutation,
   usePartialUpdateAttendanceSessionMutation,
   useDeleteAttendanceSessionMutation,
   type AttendanceSession,
   type AttendanceSessionCreate,
 } from '../../api';
-import styles from './Attendance.module.css';
+import styles from './GroupDetails.module.css';
 
-const AttendancePage: React.FC = () => {
+interface GroupAttendanceProps {
+  groupId: number;
+}
+
+const GroupAttendance: React.FC<GroupAttendanceProps> = ({ groupId }) => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-  const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [editingSession, setEditingSession] = useState<AttendanceSession | null>(null);
   const [form] = Form.useForm();
 
   // Queries and mutations
-  const {
-    data: sessions,
-    isLoading,
-    error,
-  } = useAttendanceSessionsQuery({
-    search: searchTerm || undefined,
-  });
+  const { data: sessions, isLoading, error } = useAttendanceSessionsByCourseGroupQuery(groupId);
 
   const createMutation = useCreateAttendanceSessionMutation(messageApi);
   const updateMutation = usePartialUpdateAttendanceSessionMutation(messageApi);
@@ -45,6 +35,7 @@ const AttendancePage: React.FC = () => {
   const handleCreate = () => {
     setEditingSession(null);
     form.resetFields();
+    form.setFieldValue('course_group', groupId);
     setModalVisible(true);
   };
 
@@ -106,18 +97,6 @@ const AttendancePage: React.FC = () => {
   };
 
   const columns = [
-    {
-      title: 'Kurs',
-      dataIndex: 'course_name',
-      key: 'course_name',
-      sorter: (a: AttendanceSession, b: AttendanceSession) =>
-        a.course_name.localeCompare(b.course_name),
-    },
-    {
-      title: 'Qrup',
-      dataIndex: 'course_group_name',
-      key: 'course_group_name',
-    },
     {
       title: 'Tarix',
       dataIndex: 'date',
@@ -205,62 +184,41 @@ const AttendancePage: React.FC = () => {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <Alert
-          message="Xəta"
-          description="Davamiyyəti yükləmək mümkün olmadı"
-          type="error"
-          showIcon
-        />
-      </div>
+      <Alert
+        message="Xəta"
+        description="Davamiyyəti yükləmək mümkün olmadı"
+        type="error"
+        showIcon
+      />
     );
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       {contextHolder}
-      <PageHeader
-        title="Davamiyyət Sessiyaları"
-        actions={[
-          {
-            label: 'Yeni Sessiya',
-            icon: <PlusOutlined />,
-            onClick: handleCreate,
-            type: 'primary',
-          },
-        ]}
-      />
-
-      <FilterPanel
-        filters={{
-          search: {
-            type: 'input',
-            placeholder: 'Qrup və ya kurs axtar...',
-            value: searchTerm,
-            onChange: (value) => setSearchTerm((value as string) || ''),
-          },
-        }}
-      />
-
-      <div className={styles.tableContainer}>
-        {isLoading ? (
-          <div className={styles.loadingContainer}>
-            <Spin size="large" tip="Yüklənir..." />
-          </div>
-        ) : (
-          <Table
-            columns={columns}
-            dataSource={sessions}
-            rowKey="id"
-            pagination={{
-              pageSize: 10,
-              showSizeChanger: true,
-              showTotal: (total) => `Cəmi: ${total}`,
-            }}
-            scroll={{ x: 1400 }}
-          />
-        )}
+      <div style={{ marginBottom: '16px', textAlign: 'right' }}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          Yeni Sessiya
+        </Button>
       </div>
+
+      {isLoading ? (
+        <div className={styles.loadingContainer}>
+          <Spin size="large" tip="Yüklənir..." />
+        </div>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={sessions}
+          rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showTotal: (total) => `Cəmi: ${total}`,
+          }}
+          scroll={{ x: 1200 }}
+        />
+      )}
 
       <Modal
         title={editingSession ? 'Sessiyani Redaktə Et' : 'Yeni Sessiya'}
@@ -272,17 +230,10 @@ const AttendancePage: React.FC = () => {
         confirmLoading={createMutation.isPending || updateMutation.isPending}
         width={600}
       >
-        <Form form={form} layout="vertical" className={styles.form}>
-          {!editingSession && (
-            <Form.Item
-              name="course_group"
-              label="Qrup ID"
-              rules={[{ required: true, message: 'Qrup ID daxil edin' }]}
-              tooltip="Qrup seçmək üçün qrup ID-ni daxil edin. Qrup məlumatlarını Qruplar səhifəsindən əldə edə bilərsiniz."
-            >
-              <Input type="number" placeholder="Qrup ID daxil edin" />
-            </Form.Item>
-          )}
+        <Form form={form} layout="vertical">
+          <Form.Item name="course_group" hidden>
+            <Input type="number" />
+          </Form.Item>
           <Form.Item name="date" label="Tarix" rules={[{ required: true, message: 'Tarix seçin' }]}>
             <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
           </Form.Item>
@@ -295,4 +246,4 @@ const AttendancePage: React.FC = () => {
   );
 };
 
-export default AttendancePage;
+export default GroupAttendance;

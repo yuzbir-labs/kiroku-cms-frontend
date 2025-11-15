@@ -1,62 +1,81 @@
 import { createQuery } from '../../config';
 import api from '../../config/api';
-import type { Attendance, AttendanceListParams } from './types';
+import type {
+  AttendanceSession,
+  AttendanceSessionDetail,
+  AttendanceSessionListParams,
+  SessionStudentsResponse,
+} from './types';
 
 // API functions
-const fetchAttendances = async (
-  params?: AttendanceListParams
-): Promise<Attendance[]> => {
-  const response = await api.get('/attendance/', { params });
+const fetchAttendanceSessions = async (
+  params?: AttendanceSessionListParams
+): Promise<AttendanceSession[]> => {
+  const response = await api.get('/attendance-sessions/', { params });
   return response.data;
 };
 
-const fetchAttendance = async (id: number): Promise<Attendance> => {
-  const response = await api.get(`/attendance/${id}/`);
+const fetchAttendanceSession = async (id: number): Promise<AttendanceSessionDetail> => {
+  const response = await api.get(`/attendance-sessions/${id}/`);
   return response.data;
 };
 
-const fetchMyAttendance = async (): Promise<Attendance[]> => {
-  const response = await api.get('/attendance/my_attendance/');
+const fetchSessionStudents = async (sessionId: number): Promise<SessionStudentsResponse> => {
+  const response = await api.get(`/attendance-sessions/${sessionId}/students/`);
   return response.data;
 };
 
-const fetchAttendanceStatistics = async (
-  courseGroupId?: number
-): Promise<unknown> => {
-  const response = await api.get('/attendance/statistics/', {
-    params: { course_group: courseGroupId },
+const fetchAttendanceSessionsByCourseGroup = async (
+  courseGroupId: number,
+  params?: Omit<AttendanceSessionListParams, 'course_group'>
+): Promise<AttendanceSession[]> => {
+  const response = await api.get(`/attendance-sessions/list_by_course_group/`, {
+    params: { ...params, course_group: courseGroupId },
   });
   return response.data;
 };
 
 // Query hooks
-export const useAttendanceListQuery = (params?: AttendanceListParams) => {
-  return createQuery<Attendance[]>({
-    queryKey: ['attendance', 'list', JSON.stringify(params)],
-    queryFn: () => fetchAttendances(params),
+export const useAttendanceSessionsQuery = (params?: AttendanceSessionListParams) => {
+  return createQuery<AttendanceSession[]>({
+    queryKey: ['attendance-sessions', 'list', JSON.stringify(params)],
+    queryFn: () => fetchAttendanceSessions(params),
+    options: {
+      // Require course_group parameter for optimal performance
+      enabled: !!params?.course_group,
+    },
   })();
 };
 
-export const useAttendanceQuery = (id: number) => {
-  return createQuery<Attendance>({
-    queryKey: ['attendance', 'detail', id],
-    queryFn: () => fetchAttendance(id),
+export const useAttendanceSessionQuery = (id: number) => {
+  return createQuery<AttendanceSessionDetail>({
+    queryKey: ['attendance-sessions', 'detail', id],
+    queryFn: () => fetchAttendanceSession(id),
     options: {
       enabled: !!id,
     },
   })();
 };
 
-export const useMyAttendanceQuery = () => {
-  return createQuery<Attendance[]>({
-    queryKey: ['attendance', 'my-attendance'],
-    queryFn: fetchMyAttendance,
+export const useSessionStudentsQuery = (sessionId: number) => {
+  return createQuery<SessionStudentsResponse>({
+    queryKey: ['attendance-sessions', 'students', sessionId],
+    queryFn: () => fetchSessionStudents(sessionId),
+    options: {
+      enabled: !!sessionId,
+    },
   })();
 };
 
-export const useAttendanceStatisticsQuery = (courseGroupId?: number) => {
-  return createQuery<unknown>({
-    queryKey: ['attendance', 'statistics', courseGroupId],
-    queryFn: () => fetchAttendanceStatistics(courseGroupId),
+export const useAttendanceSessionsByCourseGroupQuery = (
+  courseGroupId: number,
+  params?: Omit<AttendanceSessionListParams, 'course_group'>
+) => {
+  return createQuery<AttendanceSession[]>({
+    queryKey: ['attendance-sessions', 'by-course-group', courseGroupId, JSON.stringify(params)],
+    queryFn: () => fetchAttendanceSessionsByCourseGroup(courseGroupId, params),
+    options: {
+      enabled: !!courseGroupId,
+    },
   })();
 };

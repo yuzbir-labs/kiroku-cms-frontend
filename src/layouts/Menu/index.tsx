@@ -4,7 +4,6 @@ import {
   DashboardOutlined,
   BankOutlined,
   BookOutlined,
-  CheckCircleOutlined,
   UserAddOutlined,
   PhoneOutlined,
   UserOutlined,
@@ -22,7 +21,6 @@ import {
   canViewBranches,
   canViewCourses,
   canViewEnrollments,
-  canViewAttendance,
   canViewInquiries,
   canManageUsers,
   canViewMyGroups,
@@ -122,15 +120,6 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
       });
     }
 
-    // Attendance - students and teachers can view
-    if (canViewAttendance(user)) {
-      items.push({
-        key: '/attendance',
-        icon: <CheckCircleOutlined />,
-        label: 'Davamiyyət',
-      });
-    }
-
     // Inquiries - only for managers and admins
     if (canViewInquiries(user)) {
       items.push({
@@ -196,9 +185,7 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
             />
             <div className={styles.userDetails}>
               <div className={styles.userName}>{user?.full_name || 'User'}</div>
-              <div className={styles.userRole}>
-                {getUserRoleLabel(user?.user_type)}
-              </div>
+              <div className={styles.userRole}>{getUserRoleLabel(user?.user_type)}</div>
             </div>
           </Space>
         </div>

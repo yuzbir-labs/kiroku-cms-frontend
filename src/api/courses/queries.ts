@@ -50,10 +50,7 @@ export const useCourseQuery = (id: number) => {
   })();
 };
 
-export const useCourseGroupsByCourseQuery = (
-  id: number,
-  params?: CourseGroupListParams
-) => {
+export const useCourseGroupsByCourseQuery = (id: number, params?: CourseGroupListParams) => {
   return createQuery<CourseGroup[]>({
     queryKey: ['courses', 'groups', id, JSON.stringify(params)],
     queryFn: () => fetchCourseGroups(id, params),
@@ -79,11 +76,39 @@ const fetchActiveUpcomingCourseGroups = async (
   return response.data;
 };
 
-export const useActiveUpcomingCourseGroupsQuery = (
-  params?: CourseGroupListParams
-) => {
+export const useActiveUpcomingCourseGroupsQuery = (params?: CourseGroupListParams) => {
   return createQuery<CourseGroup[]>({
     queryKey: ['courses', 'groups', 'active-upcoming', JSON.stringify(params)],
     queryFn: () => fetchActiveUpcomingCourseGroups(params),
+  })();
+};
+
+const fetchCourseGroup = async (groupId: number): Promise<CourseGroup> => {
+  const response = await api.get(`/courses/groups/${groupId}/`);
+  return response.data;
+};
+
+const fetchCourseGroupStudents = async (groupId: number): Promise<unknown> => {
+  const response = await api.get(`/courses/groups/${groupId}/students/`);
+  return response.data;
+};
+
+export const useCourseGroupQuery = (groupId: number) => {
+  return createQuery<CourseGroup>({
+    queryKey: ['courses', 'groups', groupId],
+    queryFn: () => fetchCourseGroup(groupId),
+    options: {
+      enabled: !!groupId,
+    },
+  })();
+};
+
+export const useCourseGroupStudentsQuery = (groupId: number) => {
+  return createQuery<unknown>({
+    queryKey: ['courses', 'groups', groupId, 'students'],
+    queryFn: () => fetchCourseGroupStudents(groupId),
+    options: {
+      enabled: !!groupId,
+    },
   })();
 };

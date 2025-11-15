@@ -10,7 +10,9 @@ import Branches from './pages/Branches';
 import Courses from './pages/Courses';
 import CourseGroups from './pages/CourseGroups';
 import MyGroups from './pages/MyGroups';
+import GroupDetails from './pages/GroupDetails';
 import Attendance from './pages/Attendance';
+import AttendanceSession from './pages/AttendanceSession';
 import Enrollments from './pages/Enrollments';
 import Inquiries from './pages/Inquiries';
 import Users from './pages/Users';
@@ -112,6 +114,18 @@ const AppRoutes: React.FC = () => {
         }
       />
 
+      {/* Protected Routes - Group Details (All authenticated users) */}
+      <Route
+        path="/groups/:groupId"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <GroupDetails />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
       {/* Protected Routes - Attendance (Students and teachers can view) */}
       <Route
         path="/attendance"
@@ -127,6 +141,26 @@ const AppRoutes: React.FC = () => {
           >
             <Layout>
               <Attendance />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Routes - Attendance Session Detail */}
+      <Route
+        path="/attendance/session/:sessionId"
+        element={
+          <ProtectedRoute
+            allowedRoles={[
+              UserRoles.ORGANIZATION_ADMIN,
+              UserRoles.BRANCH_ADMIN,
+              UserRoles.BRANCH_MANAGER,
+              UserRoles.TEACHER,
+              UserRoles.STUDENT,
+            ]}
+          >
+            <Layout>
+              <AttendanceSession />
             </Layout>
           </ProtectedRoute>
         }

@@ -8,6 +8,12 @@
   composes: pageTitle from '../../../styles/mixins.css';
 }
 
+.subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
 .actions {
   composes: pageActions from '../../../styles/mixins.css';
 }

@@ -1,0 +1,40 @@
+@import '../../styles/variables.css';
+@import '../../styles/mixins.css';
+
+.container {
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.sessionInfo {
+  margin-bottom: var(--spacing-lg);
+}
+
+.actions {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.studentsCard {
+  margin-bottom: var(--spacing-lg);
+}
+
+.studentsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.studentsHeader h3 {
+  margin: 0;
+}
+

@@ -313,7 +313,7 @@ const Branches: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="state" label="Ştat/Rayon">
+          <Form.Item name="state" label="Rayon">
             <Input />
           </Form.Item>
           <Form.Item

@@ -1,0 +1,22 @@
+@import '../../styles/variables.css';
+@import '../../styles/mixins.css';
+
+.container {
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.content {
+  background: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+

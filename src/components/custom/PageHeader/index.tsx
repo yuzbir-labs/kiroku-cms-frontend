@@ -5,6 +5,7 @@ import styles from './PageHeader.module.css';
 
 interface PageHeaderProps {
   title: string;
+  subtitle?: string;
   actions?: {
     label: string;
     icon?: React.ReactNode;
@@ -15,10 +16,13 @@ interface PageHeaderProps {
   }[];
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title, actions }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, actions }) => {
   return (
     <div className={styles.header}>
-      <h1 className={styles.title}>{title}</h1>
+      <div>
+        <h1 className={styles.title}>{title}</h1>
+        {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+      </div>
       {actions && actions.length > 0 && (
         <div className={styles.actions}>
           {actions.map((action, index) => (

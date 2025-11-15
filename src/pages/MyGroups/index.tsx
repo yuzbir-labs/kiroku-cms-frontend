@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Spin, Alert, Tag, Card, Row, Col } from 'antd';
-import {
-  BookOutlined,
-  UserOutlined,
-  CalendarOutlined,
-} from '@ant-design/icons';
+import { BookOutlined, UserOutlined, CalendarOutlined } from '@ant-design/icons';
 import { PageHeader, FilterPanel } from '../../components/custom';
 import { Table } from '../../components/restyled';
 import {
@@ -18,10 +15,9 @@ import { UserRoles } from '../../utils/permissions';
 import styles from './MyGroups.module.css';
 
 const MyGroups: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<
-    CourseGroupStatus | undefined
-  >();
+  const [statusFilter, setStatusFilter] = useState<CourseGroupStatus | undefined>();
 
   const { data: user } = useCurrentUserQuery();
   const { data: myGroupsData, isLoading, error } = useMyCourseGroupsQuery();
@@ -194,18 +190,12 @@ const MyGroups: React.FC = () => {
     },
   ];
 
-  const columns =
-    user?.user_type === UserRoles.TEACHER ? teacherColumns : studentColumns;
+  const columns = user?.user_type === UserRoles.TEACHER ? teacherColumns : studentColumns;
 
   if (error) {
     return (
       <div className={styles.container}>
-        <Alert
-          message="Xəta"
-          description="Qrupları yükləmək mümkün olmadı"
-          type="error"
-          showIcon
-        />
+        <Alert message="Xəta" description="Qrupları yükləmək mümkün olmadı" type="error" showIcon />
       </div>
     );
   }
@@ -214,9 +204,7 @@ const MyGroups: React.FC = () => {
     <div className={styles.container}>
       <PageHeader
         title={
-          user?.user_type === UserRoles.TEACHER
-            ? 'Mənim Dərs Verdiyim Qruplar'
-            : 'Mənim Qruplarım'
+          user?.user_type === UserRoles.TEACHER ? 'Mənim Dərs Verdiyim Qruplar' : 'Mənim Qruplarım'
         }
       />
 
@@ -236,10 +224,7 @@ const MyGroups: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <div className={styles.statCard}>
-              <CalendarOutlined
-                className={styles.statIcon}
-                style={{ color: '#52c41a' }}
-              />
+              <CalendarOutlined className={styles.statIcon} style={{ color: '#52c41a' }} />
               <div className={styles.statContent}>
                 <div className={styles.statValue}>
                   {groups?.filter((g) => g.status === 'ACTIVE').length || 0}
@@ -252,18 +237,13 @@ const MyGroups: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <div className={styles.statCard}>
-              <UserOutlined
-                className={styles.statIcon}
-                style={{ color: '#1890ff' }}
-              />
+              <UserOutlined className={styles.statIcon} style={{ color: '#1890ff' }} />
               <div className={styles.statContent}>
                 <div className={styles.statValue}>
                   {groups?.reduce((sum, g) => sum + g.enrolled_count, 0) || 0}
                 </div>
                 <div className={styles.statLabel}>
-                  {user?.user_type === UserRoles.TEACHER
-                    ? 'Ümumi Tələbələr'
-                    : 'Həmsiniflərim'}
+                  {user?.user_type === UserRoles.TEACHER ? 'Ümumi Tələbələr' : 'Həmsiniflərim'}
                 </div>
               </div>
             </div>
@@ -272,10 +252,7 @@ const MyGroups: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <div className={styles.statCard}>
-              <BookOutlined
-                className={styles.statIcon}
-                style={{ color: '#faad14' }}
-              />
+              <BookOutlined className={styles.statIcon} style={{ color: '#faad14' }} />
               <div className={styles.statContent}>
                 <div className={styles.statValue}>
                   {groups?.filter((g) => g.status === 'UPCOMING').length || 0}
@@ -299,8 +276,7 @@ const MyGroups: React.FC = () => {
             type: 'select',
             placeholder: 'Status',
             value: statusFilter,
-            onChange: (value) =>
-              setStatusFilter(value as CourseGroupStatus | undefined),
+            onChange: (value) => setStatusFilter(value as CourseGroupStatus | undefined),
             options: [
               { label: 'Gələcək', value: 'UPCOMING' },
               { label: 'Aktiv', value: 'ACTIVE' },
@@ -327,6 +303,10 @@ const MyGroups: React.FC = () => {
               showTotal: (total) => `Cəmi: ${total}`,
             }}
             scroll={{ x: 1200 }}
+            onRow={(record) => ({
+              onClick: () => navigate(`/groups/${record.id}`),
+              style: { cursor: 'pointer' },
+            })}
           />
         )}
       </div>

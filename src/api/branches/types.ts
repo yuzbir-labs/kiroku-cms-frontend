@@ -1,7 +1,5 @@
 export interface Branch {
   id: number;
-  organization: number;
-  organization_name: string;
   name: string;
   code: string;
   address: string;
@@ -17,7 +15,6 @@ export interface Branch {
 }
 
 export interface BranchCreate {
-  organization: number;
   name: string;
   code: string;
   address: string;
@@ -31,7 +28,6 @@ export interface BranchCreate {
 }
 
 export interface BranchUpdate {
-  organization?: number;
   name?: string;
   code?: string;
   address?: string;

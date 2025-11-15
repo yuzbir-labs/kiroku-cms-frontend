@@ -52,9 +52,7 @@ const CourseGroups: React.FC = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<
-    CourseGroupStatus | undefined
-  >();
+  const [statusFilter, setStatusFilter] = useState<CourseGroupStatus | undefined>();
   const [branchFilter, setBranchFilter] = useState<number | undefined>();
   const [teacherFilter, setTeacherFilter] = useState<number[] | undefined>();
   const [modalVisible, setModalVisible] = useState(false);
@@ -62,9 +60,7 @@ const CourseGroups: React.FC = () => {
   const [form] = Form.useForm();
 
   const { data: user } = useCurrentUserQuery();
-  const { data: course, isLoading: courseLoading } = useCourseQuery(
-    Number(courseId)
-  );
+  const { data: course, isLoading: courseLoading } = useCourseQuery(Number(courseId));
 
   // Build query params
   const queryParams = {
@@ -120,11 +116,7 @@ const CourseGroups: React.FC = () => {
     try {
       const values = await form.validateFields();
       const scheduleData: CourseGroupSchedule[] = values.schedule.map(
-        (s: {
-          day: DayOfWeek;
-          start_time: dayjs.Dayjs;
-          end_time: dayjs.Dayjs;
-        }) => ({
+        (s: { day: DayOfWeek; start_time: dayjs.Dayjs; end_time: dayjs.Dayjs }) => ({
           day: s.day,
           start_time: s.start_time.format('HH:mm'),
           end_time: s.end_time.format('HH:mm'),
@@ -287,12 +279,7 @@ const CourseGroups: React.FC = () => {
                   okText="Bəli"
                   cancelText="Xeyr"
                 >
-                  <Button
-                    type="link"
-                    danger
-                    icon={<DeleteOutlined />}
-                    size="small"
-                  />
+                  <Button type="link" danger icon={<DeleteOutlined />} size="small" />
                 </Popconfirm>
               </Space>
             ),
@@ -304,12 +291,7 @@ const CourseGroups: React.FC = () => {
   if (error) {
     return (
       <div className={styles.container}>
-        <Alert
-          message="Xəta"
-          description="Qrupları yükləmək mümkün olmadı"
-          type="error"
-          showIcon
-        />
+        <Alert message="Xəta" description="Qrupları yükləmək mümkün olmadı" type="error" showIcon />
       </div>
     );
   }
@@ -361,8 +343,7 @@ const CourseGroups: React.FC = () => {
             type: 'select',
             placeholder: 'Status',
             value: statusFilter,
-            onChange: (value) =>
-              setStatusFilter(value as CourseGroupStatus | undefined),
+            onChange: (value) => setStatusFilter(value as CourseGroupStatus | undefined),
             options: [
               { label: 'Gələcək', value: 'UPCOMING' },
               { label: 'Aktiv', value: 'ACTIVE' },
@@ -386,8 +367,7 @@ const CourseGroups: React.FC = () => {
             type: 'select',
             placeholder: 'Müəllim',
             value: teacherFilter,
-            onChange: (value) =>
-              setTeacherFilter(value as number[] | undefined),
+            onChange: (value) => setTeacherFilter(value as number[] | undefined),
             options: teachers?.map((t) => ({
               label: t.full_name,
               value: t.id,
@@ -414,6 +394,16 @@ const CourseGroups: React.FC = () => {
               showTotal: (total) => `Cəmi: ${total}`,
             }}
             scroll={{ x: 1400 }}
+            onRow={(record) => ({
+              onClick: (event) => {
+                // Don't navigate if clicking on action buttons
+                const target = event.target as HTMLElement;
+                if (!target.closest('button') && !target.closest('.ant-popover')) {
+                  navigate(`/groups/${record.id}`);
+                }
+              },
+              style: { cursor: 'pointer' },
+            })}
           />
         )}
       </div>
@@ -429,11 +419,7 @@ const CourseGroups: React.FC = () => {
         width={800}
       >
         <Form form={form} layout="vertical" className={styles.form}>
-          <Form.Item
-            name="name"
-            label="Ad"
-            rules={[{ required: true, message: 'Ad daxil edin' }]}
-          >
+          <Form.Item name="name" label="Ad" rules={[{ required: true, message: 'Ad daxil edin' }]}>
             <Input />
           </Form.Item>
           <Form.Item
@@ -473,9 +459,7 @@ const CourseGroups: React.FC = () => {
           <Form.Item
             name="max_students"
             label="Maksimum tələbə sayı"
-            rules={[
-              { required: true, message: 'Maksimum tələbə sayı daxil edin' },
-            ]}
+            rules={[{ required: true, message: 'Maksimum tələbə sayı daxil edin' }]}
           >
             <Input type="number" min={1} />
           </Form.Item>
@@ -516,11 +500,7 @@ const CourseGroups: React.FC = () => {
               <>
                 <div style={{ marginBottom: 8, fontWeight: 500 }}>Cədvəl</div>
                 {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
-                    align="baseline"
-                  >
+                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                     <Form.Item
                       {...restField}
                       name={[name, 'day']}
@@ -529,12 +509,10 @@ const CourseGroups: React.FC = () => {
                       <Select
                         placeholder="Gün"
                         style={{ width: 150 }}
-                        options={Object.entries(dayLabels).map(
-                          ([value, label]) => ({
-                            label,
-                            value,
-                          })
-                        )}
+                        options={Object.entries(dayLabels).map(([value, label]) => ({
+                          label,
+                          value,
+                        }))}
                       />
                     </Form.Item>
                     <Form.Item
@@ -542,33 +520,20 @@ const CourseGroups: React.FC = () => {
                       name={[name, 'start_time']}
                       rules={[{ required: true, message: 'Başlama vaxtı' }]}
                     >
-                      <TimePicker
-                        format="HH:mm"
-                        placeholder="Başlama"
-                        style={{ width: 120 }}
-                      />
+                      <TimePicker format="HH:mm" placeholder="Başlama" style={{ width: 120 }} />
                     </Form.Item>
                     <Form.Item
                       {...restField}
                       name={[name, 'end_time']}
                       rules={[{ required: true, message: 'Bitmə vaxtı' }]}
                     >
-                      <TimePicker
-                        format="HH:mm"
-                        placeholder="Bitmə"
-                        style={{ width: 120 }}
-                      />
+                      <TimePicker format="HH:mm" placeholder="Bitmə" style={{ width: 120 }} />
                     </Form.Item>
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
                 <Form.Item>
-                  <AntButton
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
+                  <AntButton type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                     Cədvəl əlavə et
                   </AntButton>
                 </Form.Item>

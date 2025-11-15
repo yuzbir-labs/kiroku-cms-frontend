@@ -1,97 +1,125 @@
 import { createMutation } from '../../config';
 import api from '../../config/api';
 import type {
-  Attendance,
-  AttendanceCreate,
-  AttendanceUpdate,
-  BulkAttendanceCreate,
+  AttendanceSession,
+  AttendanceSessionCreate,
+  AttendanceSessionUpdate,
+  MarkStudentAttendance,
 } from './types';
 
 // API functions
-const createAttendance = async (
-  data: AttendanceCreate
-): Promise<Attendance> => {
-  const response = await api.post('/attendance/', data);
+const createAttendanceSession = async (
+  data: AttendanceSessionCreate
+): Promise<AttendanceSession> => {
+  const response = await api.post('/attendance-sessions/', data);
   return response.data;
 };
 
-const updateAttendance = async ({
+const updateAttendanceSession = async ({
   id,
   data,
 }: {
   id: number;
-  data: AttendanceUpdate;
-}): Promise<Attendance> => {
-  const response = await api.put(`/attendance/${id}/`, data);
+  data: AttendanceSessionUpdate;
+}): Promise<AttendanceSession> => {
+  const response = await api.put(`/attendance-sessions/${id}/`, data);
   return response.data;
 };
 
-const partialUpdateAttendance = async ({
+const partialUpdateAttendanceSession = async ({
   id,
   data,
 }: {
   id: number;
-  data: Partial<AttendanceUpdate>;
-}): Promise<Attendance> => {
-  const response = await api.patch(`/attendance/${id}/`, data);
+  data: Partial<AttendanceSessionUpdate>;
+}): Promise<AttendanceSession> => {
+  const response = await api.patch(`/attendance-sessions/${id}/`, data);
   return response.data;
 };
 
-const deleteAttendance = async (id: number): Promise<void> => {
-  await api.delete(`/attendance/${id}/`);
+const deleteAttendanceSession = async (id: number): Promise<void> => {
+  await api.delete(`/attendance-sessions/${id}/`);
 };
 
-const markBulkAttendance = async (
-  data: BulkAttendanceCreate
-): Promise<unknown> => {
-  const response = await api.post('/attendance/mark_bulk/', data);
+const markStudentAttendance = async ({
+  sessionId,
+  data,
+}: {
+  sessionId: number;
+  data: MarkStudentAttendance;
+}): Promise<AttendanceSession> => {
+  const response = await api.post(`/attendance-sessions/${sessionId}/mark_student/`, data);
+  return response.data;
+};
+
+const finalizeAttendanceSession = async (sessionId: number): Promise<AttendanceSession> => {
+  const response = await api.post(`/attendance-sessions/${sessionId}/finalize/`, {});
+  return response.data;
+};
+
+const unfinalizeAttendanceSession = async (sessionId: number): Promise<AttendanceSession> => {
+  const response = await api.post(`/attendance-sessions/${sessionId}/unfinalize/`, {});
   return response.data;
 };
 
 // Mutation hooks
-export const useCreateAttendanceMutation = createMutation<
-  Attendance,
-  AttendanceCreate
+export const useCreateAttendanceSessionMutation = createMutation<
+  AttendanceSession,
+  AttendanceSessionCreate
 >({
-  mutationFn: createAttendance,
-  invalidateKeys: ['attendance'],
-  onSuccessMessage: 'Davamiyyət uğurla qeyd edildi!',
-  onErrorMessage: 'Davamiyyət qeyd etmək alınmadı',
+  mutationFn: createAttendanceSession,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Davamiyyət sessiyası uğurla yaradıldı!',
+  onErrorMessage: 'Davamiyyət sessiyası yaratmaq alınmadı',
 });
 
-export const useUpdateAttendanceMutation = createMutation<
-  Attendance,
-  { id: number; data: AttendanceUpdate }
+export const useUpdateAttendanceSessionMutation = createMutation<
+  AttendanceSession,
+  { id: number; data: AttendanceSessionUpdate }
 >({
-  mutationFn: updateAttendance,
-  invalidateKeys: ['attendance'],
-  onSuccessMessage: 'Davamiyyət uğurla yeniləndi!',
-  onErrorMessage: 'Davamiyyət yeniləmək alınmadı',
+  mutationFn: updateAttendanceSession,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Davamiyyət sessiyası uğurla yeniləndi!',
+  onErrorMessage: 'Davamiyyət sessiyası yeniləmək alınmadı',
 });
 
-export const usePartialUpdateAttendanceMutation = createMutation<
-  Attendance,
-  { id: number; data: Partial<AttendanceUpdate> }
+export const usePartialUpdateAttendanceSessionMutation = createMutation<
+  AttendanceSession,
+  { id: number; data: Partial<AttendanceSessionUpdate> }
 >({
-  mutationFn: partialUpdateAttendance,
-  invalidateKeys: ['attendance'],
-  onSuccessMessage: 'Davamiyyət uğurla yeniləndi!',
-  onErrorMessage: 'Davamiyyət yeniləmək alınmadı',
+  mutationFn: partialUpdateAttendanceSession,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Davamiyyət sessiyası uğurla yeniləndi!',
+  onErrorMessage: 'Davamiyyət sessiyası yeniləmək alınmadı',
 });
 
-export const useDeleteAttendanceMutation = createMutation<void, number>({
-  mutationFn: deleteAttendance,
-  invalidateKeys: ['attendance'],
-  onSuccessMessage: 'Davamiyyət uğurla silindi!',
-  onErrorMessage: 'Davamiyyət silmək alınmadı',
+export const useDeleteAttendanceSessionMutation = createMutation<void, number>({
+  mutationFn: deleteAttendanceSession,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Davamiyyət sessiyası uğurla silindi!',
+  onErrorMessage: 'Davamiyyət sessiyası silmək alınmadı',
 });
 
-export const useMarkBulkAttendanceMutation = createMutation<
-  unknown,
-  BulkAttendanceCreate
+export const useMarkStudentAttendanceMutation = createMutation<
+  AttendanceSession,
+  { sessionId: number; data: MarkStudentAttendance }
 >({
-  mutationFn: markBulkAttendance,
-  invalidateKeys: ['attendance'],
-  onSuccessMessage: 'Davamiyyət uğurla kütləvi qeyd edildi!',
-  onErrorMessage: 'Kütləvi davamiyyət qeyd etmək alınmadı',
+  mutationFn: markStudentAttendance,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Tələbə davamiyyəti uğurla qeyd edildi!',
+  onErrorMessage: 'Tələbə davamiyyəti qeyd etmək alınmadı',
+});
+
+export const useFinalizeAttendanceSessionMutation = createMutation<AttendanceSession, number>({
+  mutationFn: finalizeAttendanceSession,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Davamiyyət sessiyası uğurla tamamlandı!',
+  onErrorMessage: 'Davamiyyət sessiyası tamamlamaq alınmadı',
+});
+
+export const useUnfinalizeAttendanceSessionMutation = createMutation<AttendanceSession, number>({
+  mutationFn: unfinalizeAttendanceSession,
+  invalidateKeys: ['attendance-sessions'],
+  onSuccessMessage: 'Davamiyyət sessiyası redaktə üçün açıldı!',
+  onErrorMessage: 'Davamiyyət sessiyası açmaq alınmadı',
 });
