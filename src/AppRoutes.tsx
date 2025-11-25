@@ -116,7 +116,7 @@ const AppRoutes: React.FC = () => {
 
       {/* Protected Routes - Group Details (All authenticated users) */}
       <Route
-        path="/groups/:groupId"
+        path="/groups/:courseId/:groupId"
         element={
           <ProtectedRoute>
             <Layout>

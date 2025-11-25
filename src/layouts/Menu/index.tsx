@@ -156,7 +156,7 @@ const Menu: React.FC<MenuProps> = ({ visible, onClose, onMenuClick }) => {
   ];
 
   if (isLoggingOut) {
-    return <Loading text="Çıxış edilir..." />;
+    return <Loading />;
   }
 
   return (

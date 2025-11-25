@@ -304,7 +304,7 @@ const MyGroups: React.FC = () => {
             }}
             scroll={{ x: 1200 }}
             onRow={(record) => ({
-              onClick: () => navigate(`/groups/${record.id}`),
+              onClick: () => navigate(`/groups/${record.course}/${record.id}`),
               style: { cursor: 'pointer' },
             })}
           />

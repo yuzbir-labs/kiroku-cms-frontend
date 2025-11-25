@@ -35,7 +35,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Show loading spinner while checking authentication
   if (isLoading) {
-    return <Loading text="Yoxlanılır..." />;
+    return <Loading />;
   }
 
   // Check if authentication is required

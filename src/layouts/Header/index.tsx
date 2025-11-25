@@ -64,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   ];
 
   if (isLoggingOut) {
-    return <Loading text="Çıxış edilir..." />;
+    return <Loading />;
   }
 
   return (

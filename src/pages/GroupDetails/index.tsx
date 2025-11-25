@@ -15,10 +15,10 @@ import GroupGrades from './GroupGrades.tsx';
 import styles from './GroupDetails.module.css';
 
 const GroupDetails: React.FC = () => {
-  const { groupId } = useParams<{ groupId: string }>();
+  const { courseId, groupId } = useParams<{ courseId: string; groupId: string }>();
   const navigate = useNavigate();
 
-  const { data: group, isLoading, error } = useCourseGroupQuery(Number(groupId));
+  const { data: group, isLoading, error } = useCourseGroupQuery(Number(courseId), Number(groupId));
 
   if (isLoading) {
     return (
