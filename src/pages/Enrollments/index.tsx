@@ -16,6 +16,8 @@ import {
 	DeleteOutlined,
 	CheckCircleOutlined,
 	CloseCircleOutlined,
+	DollarOutlined,
+	EyeOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -35,9 +37,11 @@ import {
 	useDropEnrollmentMutation,
 	useUsersQuery,
 	useActiveUpcomingCourseGroupsQuery,
+	usePaymentsByEnrollmentQuery,
 	type Enrollment,
 	type EnrollmentCreate,
 	type EnrollmentStatus,
+	type Payment,
 } from "../../api";
 import styles from "./Enrollments.module.css";
 
@@ -57,6 +61,9 @@ const Enrollments: React.FC = () => {
 	);
 	const [selectedStatus, setSelectedStatus] =
 		useState<EnrollmentStatus>("PENDING");
+	const [paymentModalVisible, setPaymentModalVisible] = useState(false);
+	const [selectedEnrollmentForPayments, setSelectedEnrollmentForPayments] =
+		useState<Enrollment | null>(null);
 	const [form] = Form.useForm();
 
 	// Queries and mutations
@@ -73,6 +80,8 @@ const Enrollments: React.FC = () => {
 
 	const { data: students } = useUsersQuery({ user_type: "STUDENT" });
 	const { data: courseGroups } = useActiveUpcomingCourseGroupsQuery();
+	const { data: paymentsData, isLoading: paymentsLoading } =
+		usePaymentsByEnrollmentQuery(selectedEnrollmentForPayments?.id || 0, {});
 
 	const createMutation = useCreateEnrollmentMutation(messageApi);
 	const updateMutation = usePartialUpdateEnrollmentMutation(messageApi);
@@ -112,6 +121,19 @@ const Enrollments: React.FC = () => {
 
 	const handleDrop = async (id: number) => {
 		dropMutation.mutate(id);
+	};
+
+	const handleViewPayments = (record: Enrollment) => {
+		setSelectedEnrollmentForPayments(record);
+		setPaymentModalVisible(true);
+	};
+
+	const calculatePaymentStats = (enrollmentId: number) => {
+		if (!enrollments) return { totalPaid: 0, paymentCount: 0 };
+
+		// This is a placeholder - in a real scenario, you'd fetch payment data
+		// For now, we'll display a view button to see payments
+		return { totalPaid: 0, paymentCount: 0 };
 	};
 
 	const handleModalOk = async () => {
@@ -247,6 +269,22 @@ const Enrollments: React.FC = () => {
 				>
 					{notes || "-"}
 				</div>
+			),
+		},
+		{
+			title: "Ödənişlər",
+			key: "payments",
+			width: 120,
+			render: (_: unknown, record: Enrollment) => (
+				<Button
+					type="link"
+					icon={<DollarOutlined />}
+					onClick={() => handleViewPayments(record)}
+					size="small"
+					title="Ödənişlərə bax"
+				>
+					Göstər
+				</Button>
 			),
 		},
 		{
@@ -535,6 +573,188 @@ const Enrollments: React.FC = () => {
 						<Input.TextArea rows={3} placeholder="İstəyə bağlı qeydlər..." />
 					</Form.Item>
 				</Form>
+			</Modal>
+
+			<Modal
+				title={`Ödənişlər - ${selectedEnrollmentForPayments?.student_name || ""}`}
+				open={paymentModalVisible}
+				onCancel={() => {
+					setPaymentModalVisible(false);
+					setSelectedEnrollmentForPayments(null);
+				}}
+				footer={[
+					<Button
+						key="close"
+						onClick={() => {
+							setPaymentModalVisible(false);
+							setSelectedEnrollmentForPayments(null);
+						}}
+					>
+						Bağla
+					</Button>,
+				]}
+				width={900}
+			>
+				{paymentsLoading ? (
+					<div style={{ textAlign: "center", padding: "20px" }}>
+						<Spin size="large" />
+					</div>
+				) : (
+					<>
+						{selectedEnrollmentForPayments && (
+							<div style={{ marginBottom: "20px" }}>
+								<Alert
+									message="Qeydiyyat Məlumatı"
+									description={
+										<Space direction="vertical" size="small">
+											<div>
+												<strong>Kurs:</strong>{" "}
+												{selectedEnrollmentForPayments.course_name}
+											</div>
+											<div>
+												<strong>Qrup:</strong>{" "}
+												{selectedEnrollmentForPayments.course_group_name}
+											</div>
+											<div>
+												<strong>Aylıq qiymət:</strong>{" "}
+												{selectedEnrollmentForPayments.monthly_price} AZN
+											</div>
+											<div>
+												<strong>Status:</strong>{" "}
+												<Tag
+													color={
+														statusColors[selectedEnrollmentForPayments.status]
+													}
+												>
+													{statusLabels[selectedEnrollmentForPayments.status]}
+												</Tag>
+											</div>
+										</Space>
+									}
+									type="info"
+								/>
+							</div>
+						)}
+
+						{paymentsData && paymentsData.results.length > 0 ? (
+							<>
+								<div style={{ marginBottom: "16px" }}>
+									<Space size="large">
+										<div>
+											<strong>Cəmi ödənilmiş:</strong>{" "}
+											<span style={{ color: "#52c41a", fontSize: "16px" }}>
+												{paymentsData.results
+													.filter((p) => p.status === "COMPLETED")
+													.reduce((sum, p) => sum + Number(p.amount), 0)
+													.toFixed(2)}{" "}
+												AZN
+											</span>
+										</div>
+										<div>
+											<strong>Gözləyən ödənişlər:</strong>{" "}
+											<span style={{ color: "#faad14" }}>
+												{paymentsData.results
+													.filter((p) => p.status === "PENDING")
+													.reduce((sum, p) => sum + Number(p.amount), 0)
+													.toFixed(2)}{" "}
+												AZN
+											</span>
+										</div>
+										<div>
+											<strong>Ödəniş sayı:</strong>{" "}
+											{paymentsData.results.length}
+										</div>
+									</Space>
+								</div>
+								<Table
+									columns={[
+										{
+											title: "Tarix",
+											dataIndex: "payment_date",
+											key: "payment_date",
+											render: (date: string) =>
+												new Date(date).toLocaleDateString("az-AZ"),
+										},
+										{
+											title: "Məbləğ",
+											dataIndex: "amount",
+											key: "amount",
+											render: (amount: number) => `${amount.toFixed(2)} AZN`,
+										},
+										{
+											title: "Status",
+											dataIndex: "status",
+											key: "status",
+											render: (status: string) => {
+												const statusConfig: Record<
+													string,
+													{ color: string; label: string }
+												> = {
+													PENDING: { color: "default", label: "Gözləyir" },
+													COMPLETED: { color: "success", label: "Tamamlandı" },
+													FAILED: { color: "error", label: "Uğursuz" },
+													REFUNDED: {
+														color: "warning",
+														label: "Geri qaytarıldı",
+													},
+												};
+												return (
+													<Tag color={statusConfig[status]?.color || "default"}>
+														{statusConfig[status]?.label || status}
+													</Tag>
+												);
+											},
+										},
+										{
+											title: "Ödəniş üsulu",
+											dataIndex: "payment_method",
+											key: "payment_method",
+											render: (method: string) => {
+												const methodLabels: Record<string, string> = {
+													CASH: "Nağd",
+													CREDIT_CARD: "Kredit kartı",
+													DEBIT_CARD: "Debet kartı",
+													BANK_TRANSFER: "Bank köçürməsi",
+													MOBILE_PAYMENT: "Mobil ödəniş",
+													OTHER: "Digər",
+												};
+												return methodLabels[method] || method;
+											},
+										},
+										{
+											title: "İstinad nömrəsi",
+											dataIndex: "reference_number",
+											key: "reference_number",
+											render: (ref: string) => ref || "-",
+										},
+										{
+											title: "Qeyd edən",
+											dataIndex: "recorded_by_name",
+											key: "recorded_by_name",
+										},
+										{
+											title: "Qeydlər",
+											dataIndex: "notes",
+											key: "notes",
+											render: (notes: string) => notes || "-",
+										},
+									]}
+									dataSource={paymentsData.results}
+									rowKey="id"
+									pagination={false}
+									scroll={{ x: 800 }}
+								/>
+							</>
+						) : (
+							<Alert
+								message="Ödəniş tapılmadı"
+								description="Bu qeydiyyat üçün hələlik heç bir ödəniş edilməyib."
+								type="info"
+								showIcon
+							/>
+						)}
+					</>
+				)}
 			</Modal>
 		</div>
 	);
