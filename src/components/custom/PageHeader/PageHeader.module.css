@@ -1,11 +1,11 @@
 @import 'styles/variables.css';
 
 .header {
-  composes: pageHeader from '../../../styles/mixins.css';
+  composes: pageHeader from 'styles/mixins.css';
 }
 
 .title {
-  composes: pageTitle from '../../../styles/mixins.css';
+  composes: pageTitle from 'styles/mixins.css';
 }
 
 .subtitle {
@@ -15,6 +15,6 @@
 }
 
 .actions {
-  composes: pageActions from '../../../styles/mixins.css';
+  composes: pageActions from 'styles/mixins.css';
 }
 

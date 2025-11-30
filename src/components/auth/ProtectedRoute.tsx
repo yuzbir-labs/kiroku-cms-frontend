@@ -2,7 +2,7 @@ import { useCurrentUserQuery } from 'api';
 import type { UserType } from 'api/auth/types';
 import type React from 'react';
 import { Navigate } from 'react-router-dom';
-import { hasAnyRole, isAuthenticated } from '../../utils/permissions';
+import { hasAnyRole, isAuthenticated } from 'utils/permissions';
 import { Loading } from '../common';
 
 interface ProtectedRouteProps {

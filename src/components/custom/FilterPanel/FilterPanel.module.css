@@ -1,11 +1,11 @@
 @import 'styles/variables.css';
 
 .container {
-  composes: filtersContainer from '../../../styles/mixins.css';
+  composes: filtersContainer from 'styles/mixins.css';
 }
 
 .row {
-  composes: filtersRow from '../../../styles/mixins.css';
+  composes: filtersRow from 'styles/mixins.css';
 }
 
 .item {

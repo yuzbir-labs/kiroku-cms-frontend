@@ -1,5 +1,5 @@
-import { createQuery } from '../../config';
-import api from '../../config/api';
+import { createQuery } from 'config';
+import api from 'config/api';
 import type { Inquiry, InquiryListParams } from './types';
 
 // API functions

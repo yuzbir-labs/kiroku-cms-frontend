@@ -1,5 +1,5 @@
-import { createMutation } from '../../config';
-import api from '../../config/api';
+import { createMutation } from 'config';
+import api from 'config/api';
 import type { Enrollment, EnrollmentCreate, EnrollmentUpdate } from './types';
 
 // API functions

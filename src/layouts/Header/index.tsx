@@ -6,7 +6,7 @@ import { useCurrentUserQuery, useLogoutMutation } from 'api';
 import type React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loading } from '../../components';
+import { Loading } from 'components';
 import styles from './Header.module.css';
 
 const { Header: AntHeader } = Layout;

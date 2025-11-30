@@ -16,7 +16,7 @@ import { useCurrentUserQuery, useLogoutMutation } from 'api';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Loading } from '../../components';
+import { Loading } from 'components';
 import {
   canManageUsers,
   canViewBranches,
@@ -26,7 +26,7 @@ import {
   canViewInquiries,
   canViewMyGroups,
   getUserRoleLabel,
-} from '../../utils/permissions';
+} from 'utils/permissions';
 import styles from './Menu.module.css';
 
 interface MenuProps {
