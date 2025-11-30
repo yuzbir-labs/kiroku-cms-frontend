@@ -410,16 +410,6 @@ const CourseGroups: React.FC = () => {
               },
             }}
             scroll={{ x: 1400 }}
-            onRow={(record) => ({
-              onClick: (event) => {
-                // Don't navigate if clicking on action buttons
-                const target = event.target as HTMLElement;
-                if (!target.closest('button') && !target.closest('.ant-popover')) {
-                  navigate(`/groups/${record.course}/${record.id}`);
-                }
-              },
-              style: { cursor: 'pointer' },
-            })}
           />
         )}
       </div>

@@ -38,6 +38,8 @@ const Inquiries: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<InquiryStatus | undefined>();
   const [sourceFilter, setSourceFilter] = useState<InquirySource | undefined>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [modalVisible, setModalVisible] = useState(false);
   const [assignModalVisible, setAssignModalVisible] = useState(false);
   const [editingInquiry, setEditingInquiry] = useState<Inquiry | null>(null);
@@ -47,13 +49,15 @@ const Inquiries: React.FC = () => {
 
   // Queries and mutations
   const {
-    data: inquiries,
+    data: inquiriesResponse,
     isLoading,
     error,
   } = useInquiriesQuery({
     search: searchTerm || undefined,
     status: statusFilter,
     source: sourceFilter,
+    page: currentPage,
+    page_size: pageSize,
   });
 
   const { data: branches } = useBranchesQuery({ is_active: true });
@@ -309,13 +313,19 @@ const Inquiries: React.FC = () => {
             type: 'input',
             placeholder: 'Axtar...',
             value: searchTerm,
-            onChange: setSearchTerm,
+            onChange: (value) => {
+              setSearchTerm((value as string) || '');
+              setCurrentPage(1); // Reset to first page when search changes
+            },
           },
           status: {
             type: 'select',
             placeholder: 'Status',
             value: statusFilter,
-            onChange: setStatusFilter,
+            onChange: (value) => {
+              setStatusFilter(value as InquiryStatus | undefined);
+              setCurrentPage(1); // Reset to first page when filter changes
+            },
             options: [
               { label: 'Yeni', value: 'NEW' },
               { label: 'Əlaqə saxlanılıb', value: 'CONTACTED' },
@@ -329,7 +339,10 @@ const Inquiries: React.FC = () => {
             type: 'select',
             placeholder: 'Mənbə',
             value: sourceFilter,
-            onChange: setSourceFilter,
+            onChange: (value) => {
+              setSourceFilter(value as InquirySource | undefined);
+              setCurrentPage(1); // Reset to first page when filter changes
+            },
             options: [
               { label: 'Veb sayt', value: 'WEBSITE' },
               { label: 'Telefon', value: 'PHONE' },
@@ -351,12 +364,19 @@ const Inquiries: React.FC = () => {
         ) : (
           <Table
             columns={columns}
-            dataSource={inquiries || []}
+            dataSource={inquiriesResponse?.results || []}
             rowKey="id"
             pagination={{
-              pageSize: 10,
+              current: currentPage,
+              pageSize: pageSize,
+              total: inquiriesResponse?.count || 0,
               showSizeChanger: true,
               showTotal: (total) => `Cəmi: ${total}`,
+              pageSizeOptions: ['10', '20', '50', '100'],
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size);
+              },
             }}
             scroll={{ x: 1600 }}
           />
@@ -406,13 +426,15 @@ const Inquiries: React.FC = () => {
           </Form.Item>
           <Form.Item name="branch" label="Filial">
             <Select
-              options={branches?.map((branch) => ({
+              options={branches?.results?.map((branch) => ({
                 label: branch.name,
                 value: branch.id,
               }))}
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
             />
           </Form.Item>

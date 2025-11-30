@@ -89,6 +89,8 @@ export interface InquiryListParams {
   search?: string;
   source?: InquirySource;
   status?: InquiryStatus;
+  page?: number;
+  page_size?: number;
 }
 
 export interface InquiryAssignRequest {

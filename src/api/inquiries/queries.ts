@@ -1,9 +1,10 @@
 import { createQuery } from 'config';
 import api from 'config/api';
+import type { PaginatedResponse } from '../types';
 import type { Inquiry, InquiryListParams } from './types';
 
 // API functions
-const fetchInquiries = async (params?: InquiryListParams): Promise<Inquiry[]> => {
+const fetchInquiries = async (params?: InquiryListParams): Promise<PaginatedResponse<Inquiry>> => {
   const response = await api.get('/inquiries/', { params });
   return response.data;
 };
@@ -20,8 +21,8 @@ const fetchFollowUpInquiries = async (): Promise<Inquiry[]> => {
 
 // Query hooks
 export const useInquiriesQuery = (params?: InquiryListParams) => {
-  return createQuery<Inquiry[]>({
-    queryKey: ['inquiries', 'list', params],
+  return createQuery<PaginatedResponse<Inquiry>>({
+    queryKey: ['inquiries', 'list', JSON.stringify(params)],
     queryFn: () => fetchInquiries(params),
   })();
 };
