@@ -12,8 +12,7 @@ export const theme: ThemeConfig = {
     colorBgBase: '#ffffff',
 
     // Typography
-    fontFamily:
-      "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     fontSize: 14,
     fontSizeHeading1: 32,
     fontSizeHeading2: 24,
@@ -35,8 +34,7 @@ export const theme: ThemeConfig = {
     // Shadow
     boxShadow:
       '0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
-    boxShadowSecondary:
-      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    boxShadowSecondary: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
   },
   components: {
     Button: {
@@ -74,8 +72,7 @@ export const theme: ThemeConfig = {
     },
     Card: {
       borderRadius: 12,
-      boxShadow:
-        '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
     },
     Checkbox: {
       borderRadius: 4,

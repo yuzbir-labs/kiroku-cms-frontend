@@ -16,9 +16,7 @@ export const Input: React.FC<InputProps> & {
 };
 
 Input.TextArea = ({ className, ...props }: TextAreaProps) => {
-  const classes = [styles.input, styles.inputTextarea, className]
-    .filter(Boolean)
-    .join(' ');
+  const classes = [styles.input, styles.inputTextarea, className].filter(Boolean).join(' ');
   return <AntInput.TextArea className={classes} {...props} />;
 };
 

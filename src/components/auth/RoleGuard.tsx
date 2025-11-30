@@ -1,14 +1,14 @@
-import React from "react";
-import { useCurrentUserQuery } from "api";
-import { hasAnyRole, hasAllRoles } from "../../utils/permissions";
-import type { UserType } from "api/auth/types";
+import React from 'react';
+import { useCurrentUserQuery } from 'api';
+import { hasAnyRole, hasAllRoles } from '../../utils/permissions';
+import type { UserType } from 'api/auth/types';
 
 interface RoleGuardProps {
-	children: React.ReactNode;
-	roles: UserType[];
-	fallback?: React.ReactNode;
-	requireAll?: boolean;
-	inverse?: boolean;
+  children: React.ReactNode;
+  roles: UserType[];
+  fallback?: React.ReactNode;
+  requireAll?: boolean;
+  inverse?: boolean;
 }
 
 /**
@@ -45,32 +45,32 @@ interface RoleGuardProps {
  * </RoleGuard>
  */
 const RoleGuard: React.FC<RoleGuardProps> = ({
-	children,
-	roles,
-	fallback = null,
-	requireAll = false,
-	inverse = false,
+  children,
+  roles,
+  fallback = null,
+  requireAll = false,
+  inverse = false,
 }) => {
-	const { data: user } = useCurrentUserQuery();
+  const { data: user } = useCurrentUserQuery();
 
-	if (!user) {
-		return <>{fallback}</>;
-	}
+  if (!user) {
+    return <>{fallback}</>;
+  }
 
-	let hasAccess: boolean;
+  let hasAccess: boolean;
 
-	if (requireAll) {
-		hasAccess = hasAllRoles(user, roles);
-	} else {
-		hasAccess = hasAnyRole(user, roles);
-	}
+  if (requireAll) {
+    hasAccess = hasAllRoles(user, roles);
+  } else {
+    hasAccess = hasAnyRole(user, roles);
+  }
 
-	// Invert logic if inverse is true
-	if (inverse) {
-		hasAccess = !hasAccess;
-	}
+  // Invert logic if inverse is true
+  if (inverse) {
+    hasAccess = !hasAccess;
+  }
 
-	return hasAccess ? <>{children}</> : <>{fallback}</>;
+  return hasAccess ? <>{children}</> : <>{fallback}</>;
 };
 
 export default RoleGuard;

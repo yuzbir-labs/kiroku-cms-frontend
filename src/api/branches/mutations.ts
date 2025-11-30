@@ -8,13 +8,7 @@ const createBranch = async (data: BranchCreate): Promise<Branch> => {
   return response.data;
 };
 
-const updateBranch = async ({
-  id,
-  data,
-}: {
-  id: number;
-  data: BranchUpdate;
-}): Promise<Branch> => {
+const updateBranch = async ({ id, data }: { id: number; data: BranchUpdate }): Promise<Branch> => {
   const response = await api.put(`/branches/${id}/`, data);
   return response.data;
 };
@@ -42,10 +36,7 @@ export const useCreateBranchMutation = createMutation<Branch, BranchCreate>({
   onErrorMessage: 'Filial yaratmaq alınmadı',
 });
 
-export const useUpdateBranchMutation = createMutation<
-  Branch,
-  { id: number; data: BranchUpdate }
->({
+export const useUpdateBranchMutation = createMutation<Branch, { id: number; data: BranchUpdate }>({
   mutationFn: updateBranch,
   invalidateKeys: ['branches'],
   onSuccessMessage: 'Filial uğurla yeniləndi!',

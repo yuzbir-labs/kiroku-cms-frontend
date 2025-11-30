@@ -1,16 +1,16 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useCurrentUserQuery } from "api";
-import { hasAnyRole, isAuthenticated } from "../../utils/permissions";
-import type { UserType } from "api/auth/types";
-import { Loading } from "../common";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useCurrentUserQuery } from 'api';
+import { hasAnyRole, isAuthenticated } from '../../utils/permissions';
+import type { UserType } from 'api/auth/types';
+import { Loading } from '../common';
 
 interface ProtectedRouteProps {
-	children: React.ReactNode;
-	allowedRoles?: UserType[];
-	requireAuth?: boolean;
-	redirectTo?: string;
-	fallback?: React.ReactNode;
+  children: React.ReactNode;
+  allowedRoles?: UserType[];
+  requireAuth?: boolean;
+  redirectTo?: string;
+  fallback?: React.ReactNode;
 }
 
 /**
@@ -25,45 +25,45 @@ interface ProtectedRouteProps {
  * @param fallback - Custom fallback component if access is denied
  */
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-	children,
-	allowedRoles,
-	requireAuth = true,
-	redirectTo = "/login",
-	fallback,
+  children,
+  allowedRoles,
+  requireAuth = true,
+  redirectTo = '/login',
+  fallback,
 }) => {
-	const { data: user, isLoading, isError } = useCurrentUserQuery();
+  const { data: user, isLoading, isError } = useCurrentUserQuery();
 
-	// Show loading spinner while checking authentication
-	if (isLoading) {
-		return <Loading />;
-	}
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return <Loading />;
+  }
 
-	// Check if authentication is required
-	if (requireAuth && (!isAuthenticated(user) || isError)) {
-		return <Navigate to={redirectTo} replace />;
-	}
+  // Check if authentication is required
+  if (requireAuth && (!isAuthenticated(user) || isError)) {
+    return <Navigate to={redirectTo} replace />;
+  }
 
-	// Check if user has required roles
-	if (allowedRoles && allowedRoles.length > 0) {
-		if (!hasAnyRole(user, allowedRoles)) {
-			// If custom fallback is provided, show it
-			if (fallback) {
-				return <>{fallback}</>;
-			}
+  // Check if user has required roles
+  if (allowedRoles && allowedRoles.length > 0) {
+    if (!hasAnyRole(user, allowedRoles)) {
+      // If custom fallback is provided, show it
+      if (fallback) {
+        return <>{fallback}</>;
+      }
 
-			// Otherwise redirect to dashboard with unauthorized message
-			return (
-				<Navigate
-					to="/dashboard"
-					replace
-					state={{ message: "Bu səhifəyə giriş icazəniz yoxdur." }}
-				/>
-			);
-		}
-	}
+      // Otherwise redirect to dashboard with unauthorized message
+      return (
+        <Navigate
+          to="/dashboard"
+          replace
+          state={{ message: 'Bu səhifəyə giriş icazəniz yoxdur.' }}
+        />
+      );
+    }
+  }
 
-	// User is authenticated and has required roles
-	return <>{children}</>;
+  // User is authenticated and has required roles
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

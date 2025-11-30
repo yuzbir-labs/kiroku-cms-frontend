@@ -100,9 +100,7 @@ const ResetPassword: React.FC = () => {
       return (
         <div className={styles.verifyingContainer}>
           <Spin size="large" />
-          <p className={styles.verifyingText}>
-            Şifrə sıfırlama linki yoxlanılır...
-          </p>
+          <p className={styles.verifyingText}>Şifrə sıfırlama linki yoxlanılır...</p>
         </div>
       );
     }
@@ -141,8 +139,7 @@ const ResetPassword: React.FC = () => {
         <div>
           <h1 className={styles.title}>Şifrəni Sıfırla</h1>
           <p className={styles.description}>
-            E-poçt ünvanınızı daxil edin və sizə şifrə sıfırlama linki
-            göndərəcəyik.
+            E-poçt ünvanınızı daxil edin və sizə şifrə sıfırlama linki göndərəcəyik.
           </p>
           <Form
             form={emailForm}
@@ -178,9 +175,7 @@ const ResetPassword: React.FC = () => {
                 block
                 className={styles.submitButton}
               >
-                {requestResetMutation.isPending
-                  ? 'Göndərilir...'
-                  : 'Sıfırlama Linki Göndər'}
+                {requestResetMutation.isPending ? 'Göndərilir...' : 'Sıfırlama Linki Göndər'}
               </Button>
             </Form.Item>
 
@@ -256,9 +251,7 @@ const ResetPassword: React.FC = () => {
                 block
                 className={styles.submitButton}
               >
-                {confirmResetMutation.isPending
-                  ? 'Şifrə dəyişdirilir...'
-                  : 'Şifrəni Dəyişdir'}
+                {confirmResetMutation.isPending ? 'Şifrə dəyişdirilir...' : 'Şifrəni Dəyişdir'}
               </Button>
             </Form.Item>
           </Form>
@@ -278,12 +271,7 @@ const ResetPassword: React.FC = () => {
               : 'Əgər bu e-poçt ünvanı ilə hesab varsa, şifrə sıfırlama linki göndərilmişdir.'
           }
           extra={[
-            <Button
-              type="primary"
-              key="login"
-              onClick={() => navigate('/login')}
-              size="large"
-            >
+            <Button type="primary" key="login" onClick={() => navigate('/login')} size="large">
               Girişə Get
             </Button>,
           ]}
@@ -299,11 +287,7 @@ const ResetPassword: React.FC = () => {
       {contextHolder}
       <Card className={styles.resetPasswordCard} bordered={false}>
         <div className={styles.logoSection}>
-          <img
-            src="/kiroku-icon.svg"
-            alt="Kiroku"
-            className={styles.logoImage}
-          />
+          <img src="/kiroku-icon.svg" alt="Kiroku" className={styles.logoImage} />
           <h1 className={styles.projectName}>Kiroku</h1>
         </div>
         {renderContent()}

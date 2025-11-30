@@ -1,8 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type {
-  UseQueryOptions,
-  UseMutationOptions,
-} from '@tanstack/react-query';
+import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import type { MessageInstance } from 'antd/es/message/interface';
 import { getErrorMessage } from './apiErrors';
 
@@ -24,11 +21,7 @@ interface MutationConfig<TData, TVariables> {
   >;
 }
 
-export const createQuery = <TData>({
-  queryKey,
-  queryFn,
-  options,
-}: QueryConfig<TData>) => {
+export const createQuery = <TData>({ queryKey, queryFn, options }: QueryConfig<TData>) => {
   return () =>
     useQuery<TData, Error>({
       queryKey,
@@ -53,9 +46,7 @@ export const createMutation = <TData, TVariables>({
       onSuccess: (data) => {
         if (onSuccessMessage) {
           const message =
-            typeof onSuccessMessage === 'function'
-              ? onSuccessMessage(data)
-              : onSuccessMessage;
+            typeof onSuccessMessage === 'function' ? onSuccessMessage(data) : onSuccessMessage;
           messageApi.open({
             type: 'success',
             content: message,
@@ -76,9 +67,7 @@ export const createMutation = <TData, TVariables>({
 
         if (onErrorMessage) {
           errorMessage =
-            typeof onErrorMessage === 'function'
-              ? onErrorMessage(error)
-              : onErrorMessage;
+            typeof onErrorMessage === 'function' ? onErrorMessage(error) : onErrorMessage;
         } else {
           // Use the error message from our API interceptor
           errorMessage = getErrorMessage(error);

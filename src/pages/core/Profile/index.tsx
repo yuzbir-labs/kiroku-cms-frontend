@@ -1,443 +1,394 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-	Card,
-	Spin,
-	Alert,
-	Tag,
-	Row,
-	Col,
-	Avatar,
-	Button,
-	Form,
-	Input,
-	DatePicker,
-	message,
-	Modal,
-} from "antd";
-import {
-	UserOutlined,
-	EditOutlined,
-	SaveOutlined,
-	LockOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
+  Card,
+  Spin,
+  Alert,
+  Tag,
+  Row,
+  Col,
+  Avatar,
+  Button,
+  Form,
+  Input,
+  DatePicker,
+  message,
+  Modal,
+} from 'antd';
+import { UserOutlined, EditOutlined, SaveOutlined, LockOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
 
 // Configure dayjs plugins for Ant Design DatePicker
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import {
-	useCurrentUserQuery,
-	useUpdateProfileMutation,
-	useChangePasswordMutation,
-	useBranchesQuery,
-	useOrganizationQuery,
-} from "api";
-import type {
-	UserType,
-	ProfileUpdateRequest,
-	PasswordChangeRequest,
-} from "api";
-import styles from "./Profile.module.css";
+  useCurrentUserQuery,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
+  useBranchesQuery,
+  useOrganizationQuery,
+} from 'api';
+import type { UserType, ProfileUpdateRequest, PasswordChangeRequest } from 'api';
+import styles from './Profile.module.css';
 
 const Profile: React.FC = () => {
-	const [isEditing, setIsEditing] = useState(false);
-	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-	const [form] = Form.useForm();
-	const [passwordForm] = Form.useForm();
-	const [messageApi, contextHolder] = message.useMessage();
-	const { data: user, isLoading, error } = useCurrentUserQuery();
-	const updateProfileMutation = useUpdateProfileMutation(messageApi);
-	const changePasswordMutation = useChangePasswordMutation(messageApi);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const [passwordForm] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
+  const { data: user, isLoading, error } = useCurrentUserQuery();
+  const updateProfileMutation = useUpdateProfileMutation(messageApi);
+  const changePasswordMutation = useChangePasswordMutation(messageApi);
 
-	const { data: branches } = useBranchesQuery({
-		...(user?.branches && user.branches.length > 0
-			? { search: user.branches.join(",") }
-			: {}),
-	});
+  const { data: branches } = useBranchesQuery({
+    ...(user?.branches && user.branches.length > 0 ? { search: user.branches.join(',') } : {}),
+  });
 
-	const { data: organization } = useOrganizationQuery();
+  const { data: organization } = useOrganizationQuery();
 
-	const userTypeLabels: Record<UserType, string> = {
-		NOT_SET: "Təyin edilməyib",
-		STUDENT: "Tələbə",
-		PARENT: "Valideyn",
-		TEACHER: "Müəllim",
-		BRANCH_MANAGER: "Filial Meneceri",
-		BRANCH_ADMIN: "Filial Admini",
-		ORGANIZATION_ADMIN: "Təşkilat Admini",
-	};
+  const userTypeLabels: Record<UserType, string> = {
+    NOT_SET: 'Təyin edilməyib',
+    STUDENT: 'Tələbə',
+    PARENT: 'Valideyn',
+    TEACHER: 'Müəllim',
+    BRANCH_MANAGER: 'Filial Meneceri',
+    BRANCH_ADMIN: 'Filial Admini',
+    ORGANIZATION_ADMIN: 'Təşkilat Admini',
+  };
 
-	const userTypeColors: Record<UserType, string> = {
-		NOT_SET: "default",
-		STUDENT: "blue",
-		PARENT: "cyan",
-		TEACHER: "green",
-		BRANCH_MANAGER: "orange",
-		BRANCH_ADMIN: "purple",
-		ORGANIZATION_ADMIN: "red",
-	};
+  const userTypeColors: Record<UserType, string> = {
+    NOT_SET: 'default',
+    STUDENT: 'blue',
+    PARENT: 'cyan',
+    TEACHER: 'green',
+    BRANCH_MANAGER: 'orange',
+    BRANCH_ADMIN: 'purple',
+    ORGANIZATION_ADMIN: 'red',
+  };
 
-	const handleEdit = () => {
-		form.setFieldsValue({
-			first_name: user?.first_name,
-			last_name: user?.last_name,
-			phone_number: user?.phone_number,
-			address: user?.address,
-			date_of_birth: user?.date_of_birth ? dayjs(user.date_of_birth) : null,
-		});
-		setIsEditing(true);
-	};
+  const handleEdit = () => {
+    form.setFieldsValue({
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      phone_number: user?.phone_number,
+      address: user?.address,
+      date_of_birth: user?.date_of_birth ? dayjs(user.date_of_birth) : null,
+    });
+    setIsEditing(true);
+  };
 
-	const handleCancel = () => {
-		form.resetFields();
-		setIsEditing(false);
-	};
+  const handleCancel = () => {
+    form.resetFields();
+    setIsEditing(false);
+  };
 
-	const handleSave = async () => {
-		try {
-			const values = await form.validateFields();
-			const updateData: ProfileUpdateRequest = {
-				first_name: values.first_name,
-				last_name: values.last_name,
-				phone_number: values.phone_number || null,
-				address: values.address || null,
-				date_of_birth: values.date_of_birth
-					? dayjs(values.date_of_birth).format("YYYY-MM-DD")
-					: null,
-			};
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields();
+      const updateData: ProfileUpdateRequest = {
+        first_name: values.first_name,
+        last_name: values.last_name,
+        phone_number: values.phone_number || null,
+        address: values.address || null,
+        date_of_birth: values.date_of_birth
+          ? dayjs(values.date_of_birth).format('YYYY-MM-DD')
+          : null,
+      };
 
-			await updateProfileMutation.mutateAsync(updateData);
-			setIsEditing(false);
-		} catch (error) {
-			console.error("Validation failed:", error);
-		}
-	};
+      await updateProfileMutation.mutateAsync(updateData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Validation failed:', error);
+    }
+  };
 
-	const handlePasswordChange = async () => {
-		try {
-			const values = await passwordForm.validateFields();
-			const passwordData: PasswordChangeRequest = {
-				current_password: values.current_password,
-				new_password: values.new_password,
-				confirm_password: values.confirm_password,
-			};
+  const handlePasswordChange = async () => {
+    try {
+      const values = await passwordForm.validateFields();
+      const passwordData: PasswordChangeRequest = {
+        current_password: values.current_password,
+        new_password: values.new_password,
+        confirm_password: values.confirm_password,
+      };
 
-			await changePasswordMutation.mutateAsync(passwordData);
-			setIsPasswordModalVisible(false);
-			passwordForm.resetFields();
-		} catch (error) {
-			console.error("Password change failed:", error);
-		}
-	};
+      await changePasswordMutation.mutateAsync(passwordData);
+      setIsPasswordModalVisible(false);
+      passwordForm.resetFields();
+    } catch (error) {
+      console.error('Password change failed:', error);
+    }
+  };
 
-	const handlePasswordModalCancel = () => {
-		setIsPasswordModalVisible(false);
-		passwordForm.resetFields();
-	};
+  const handlePasswordModalCancel = () => {
+    setIsPasswordModalVisible(false);
+    passwordForm.resetFields();
+  };
 
-	if (isLoading) {
-		return (
-			<div className={styles.container}>
-				<div className={styles.loadingContainer}>
-					<Spin size="large" />
-				</div>
-			</div>
-		);
-	}
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>
+          <Spin size="large" />
+        </div>
+      </div>
+    );
+  }
 
-	if (error || !user) {
-		return (
-			<div className={styles.container}>
-				<Alert
-					message="Xəta"
-					description="İstifadəçi məlumatlarını yükləmək mümkün olmadı"
-					type="error"
-					showIcon
-				/>
-			</div>
-		);
-	}
+  if (error || !user) {
+    return (
+      <div className={styles.container}>
+        <Alert
+          message="Xəta"
+          description="İstifadəçi məlumatlarını yükləmək mümkün olmadı"
+          type="error"
+          showIcon
+        />
+      </div>
+    );
+  }
 
-	const isOrganizationAdmin = user.user_type === "ORGANIZATION_ADMIN";
-	const userBranches =
-		branches?.filter((b) => user.branches.includes(b.id)) || [];
+  const isOrganizationAdmin = user.user_type === 'ORGANIZATION_ADMIN';
+  const userBranches = branches?.filter((b) => user.branches.includes(b.id)) || [];
 
-	return (
-		<div className={styles.container}>
-			{contextHolder}
-			<div className={styles.headerContainer}>
-				<h1 className={styles.pageTitle}>Mənim Profilim</h1>
-				{!isEditing ? (
-					<Button
-						type="primary"
-						icon={<EditOutlined />}
-						onClick={handleEdit}
-						size="large"
-					>
-						Redaktə et
-					</Button>
-				) : (
-					<div className={styles.editButtons}>
-						<Button onClick={handleCancel} size="large">
-							Ləğv et
-						</Button>
-						<Button
-							type="primary"
-							icon={<SaveOutlined />}
-							onClick={handleSave}
-							loading={updateProfileMutation.isPending}
-							size="large"
-						>
-							Yadda saxla
-						</Button>
-					</div>
-				)}
-			</div>
+  return (
+    <div className={styles.container}>
+      {contextHolder}
+      <div className={styles.headerContainer}>
+        <h1 className={styles.pageTitle}>Mənim Profilim</h1>
+        {!isEditing ? (
+          <Button type="primary" icon={<EditOutlined />} onClick={handleEdit} size="large">
+            Redaktə et
+          </Button>
+        ) : (
+          <div className={styles.editButtons}>
+            <Button onClick={handleCancel} size="large">
+              Ləğv et
+            </Button>
+            <Button
+              type="primary"
+              icon={<SaveOutlined />}
+              onClick={handleSave}
+              loading={updateProfileMutation.isPending}
+              size="large"
+            >
+              Yadda saxla
+            </Button>
+          </div>
+        )}
+      </div>
 
-			<Card className={styles.profileCard}>
-				<Row gutter={[24, 24]}>
-					<Col xs={24} md={6} className={styles.avatarCol}>
-						<div className={styles.avatarContainer}>
-							<Avatar
-								size={120}
-								icon={<UserOutlined />}
-								src={user.profile_picture}
-								className={styles.avatar}
-							/>
-							<h2 className={styles.userName}>{user.full_name}</h2>
-							<Tag
-								color={userTypeColors[user.user_type]}
-								className={styles.userTypeTag}
-							>
-								{userTypeLabels[user.user_type]}
-							</Tag>
-							<Tag
-								color={user.is_active ? "success" : "error"}
-								className={styles.statusTag}
-							>
-								{user.is_active ? "Aktiv" : "Deaktiv"}
-							</Tag>
-						</div>
-					</Col>
+      <Card className={styles.profileCard}>
+        <Row gutter={[24, 24]}>
+          <Col xs={24} md={6} className={styles.avatarCol}>
+            <div className={styles.avatarContainer}>
+              <Avatar
+                size={120}
+                icon={<UserOutlined />}
+                src={user.profile_picture}
+                className={styles.avatar}
+              />
+              <h2 className={styles.userName}>{user.full_name}</h2>
+              <Tag color={userTypeColors[user.user_type]} className={styles.userTypeTag}>
+                {userTypeLabels[user.user_type]}
+              </Tag>
+              <Tag color={user.is_active ? 'success' : 'error'} className={styles.statusTag}>
+                {user.is_active ? 'Aktiv' : 'Deaktiv'}
+              </Tag>
+            </div>
+          </Col>
 
-					<Col xs={24} md={18}>
-						{isEditing ? (
-							<Form form={form} layout="vertical" className={styles.editForm}>
-								<Row gutter={16}>
-									<Col span={12}>
-										<Form.Item
-											label="Ad"
-											name="first_name"
-											rules={[{ required: true, message: "Ad daxil edin" }]}
-										>
-											<Input size="large" />
-										</Form.Item>
-									</Col>
-									<Col span={12}>
-										<Form.Item
-											label="Soyad"
-											name="last_name"
-											rules={[{ required: true, message: "Soyad daxil edin" }]}
-										>
-											<Input size="large" />
-										</Form.Item>
-									</Col>
-									<Col span={12}>
-										<Form.Item label="Telefon" name="phone_number">
-											<Input size="large" />
-										</Form.Item>
-									</Col>
-									<Col span={12}>
-										<Form.Item label="Doğum tarixi" name="date_of_birth">
-											<DatePicker
-												size="large"
-												style={{ width: "100%" }}
-												format="DD.MM.YYYY"
-											/>
-										</Form.Item>
-									</Col>
-									<Col span={24}>
-										<Form.Item label="Ünvan" name="address">
-											<Input.TextArea rows={3} size="large" />
-										</Form.Item>
-									</Col>
-								</Row>
-							</Form>
-						) : (
-							<div className={styles.profileInfo}>
-								<Row gutter={[16, 24]}>
-									<Col xs={24} sm={12}>
-										<div className={styles.infoItem}>
-											<span className={styles.infoLabel}>Email:</span>
-											<span className={styles.infoValue}>{user.email}</span>
-										</div>
-									</Col>
-									<Col xs={24} sm={12}>
-										<div className={styles.infoItem}>
-											<span className={styles.infoLabel}>Telefon:</span>
-											<span className={styles.infoValue}>
-												{user.phone_number || "-"}
-											</span>
-										</div>
-									</Col>
-									<Col xs={24} sm={12}>
-										<div className={styles.infoItem}>
-											<span className={styles.infoLabel}>Doğum tarixi:</span>
-											<span className={styles.infoValue}>
-												{user.date_of_birth
-													? dayjs(user.date_of_birth).format("DD.MM.YYYY")
-													: "-"}
-											</span>
-										</div>
-									</Col>
-									<Col xs={24} sm={12}>
-										<div className={styles.infoItem}>
-											<span className={styles.infoLabel}>Təşkilat:</span>
-											<span className={styles.infoValue}>
-												{organization?.name || "-"}
-											</span>
-										</div>
-									</Col>
-									{organization?.code && (
-										<Col xs={24} sm={12}>
-											<div className={styles.infoItem}>
-												<span className={styles.infoLabel}>Təşkilat kodu:</span>
-												<span className={styles.infoValue}>
-													{organization.code}
-												</span>
-											</div>
-										</Col>
-									)}
-									{!isOrganizationAdmin && userBranches.length > 0 && (
-										<Col xs={24}>
-											<div className={styles.infoItem}>
-												<span className={styles.infoLabel}>Filiallar:</span>
-												<div className={styles.branchTags}>
-													{userBranches.map((branch) => (
-														<Tag key={branch.id} color="blue">
-															{branch.name}
-														</Tag>
-													))}
-												</div>
-											</div>
-										</Col>
-									)}
-									<Col xs={24}>
-										<div className={styles.infoItem}>
-											<span className={styles.infoLabel}>Ünvan:</span>
-											<span className={styles.infoValue}>
-												{user.address || "-"}
-											</span>
-										</div>
-									</Col>
-								</Row>
-							</div>
-						)}
-					</Col>
-				</Row>
-			</Card>
+          <Col xs={24} md={18}>
+            {isEditing ? (
+              <Form form={form} layout="vertical" className={styles.editForm}>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Ad"
+                      name="first_name"
+                      rules={[{ required: true, message: 'Ad daxil edin' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Soyad"
+                      name="last_name"
+                      rules={[{ required: true, message: 'Soyad daxil edin' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Telefon" name="phone_number">
+                      <Input size="large" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Doğum tarixi" name="date_of_birth">
+                      <DatePicker size="large" style={{ width: '100%' }} format="DD.MM.YYYY" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item label="Ünvan" name="address">
+                      <Input.TextArea rows={3} size="large" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
+            ) : (
+              <div className={styles.profileInfo}>
+                <Row gutter={[16, 24]}>
+                  <Col xs={24} sm={12}>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Email:</span>
+                      <span className={styles.infoValue}>{user.email}</span>
+                    </div>
+                  </Col>
+                  <Col xs={24} sm={12}>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Telefon:</span>
+                      <span className={styles.infoValue}>{user.phone_number || '-'}</span>
+                    </div>
+                  </Col>
+                  <Col xs={24} sm={12}>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Doğum tarixi:</span>
+                      <span className={styles.infoValue}>
+                        {user.date_of_birth ? dayjs(user.date_of_birth).format('DD.MM.YYYY') : '-'}
+                      </span>
+                    </div>
+                  </Col>
+                  <Col xs={24} sm={12}>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Təşkilat:</span>
+                      <span className={styles.infoValue}>{organization?.name || '-'}</span>
+                    </div>
+                  </Col>
+                  {organization?.code && (
+                    <Col xs={24} sm={12}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Təşkilat kodu:</span>
+                        <span className={styles.infoValue}>{organization.code}</span>
+                      </div>
+                    </Col>
+                  )}
+                  {!isOrganizationAdmin && userBranches.length > 0 && (
+                    <Col xs={24}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Filiallar:</span>
+                        <div className={styles.branchTags}>
+                          {userBranches.map((branch) => (
+                            <Tag key={branch.id} color="blue">
+                              {branch.name}
+                            </Tag>
+                          ))}
+                        </div>
+                      </div>
+                    </Col>
+                  )}
+                  <Col xs={24}>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Ünvan:</span>
+                      <span className={styles.infoValue}>{user.address || '-'}</span>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            )}
+          </Col>
+        </Row>
+      </Card>
 
-			<Row gutter={16}>
-				<Col xs={24} sm={12}>
-					<Card title="Hesab Məlumatları" className={styles.metaCard}>
-						<div className={styles.metaInfo}>
-							<div className={styles.metaItem}>
-								<span className={styles.metaLabel}>Yaradılma tarixi:</span>
-								<span className={styles.metaValue}>
-									{dayjs(user.created_at).format("DD.MM.YYYY HH:mm")}
-								</span>
-							</div>
-							<div className={styles.metaItem}>
-								<span className={styles.metaLabel}>Yenilənmə tarixi:</span>
-								<span className={styles.metaValue}>
-									{dayjs(user.updated_at).format("DD.MM.YYYY HH:mm")}
-								</span>
-							</div>
-						</div>
-					</Card>
-				</Col>
-				<Col xs={24} sm={12}>
-					<Card title="Təhlükəsizlik" className={styles.metaCard}>
-						<Button
-							type="primary"
-							icon={<LockOutlined />}
-							onClick={() => setIsPasswordModalVisible(true)}
-							block
-							size="large"
-						>
-							Şifrəni Dəyişdir
-						</Button>
-					</Card>
-				</Col>
-			</Row>
+      <Row gutter={16}>
+        <Col xs={24} sm={12}>
+          <Card title="Hesab Məlumatları" className={styles.metaCard}>
+            <div className={styles.metaInfo}>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Yaradılma tarixi:</span>
+                <span className={styles.metaValue}>
+                  {dayjs(user.created_at).format('DD.MM.YYYY HH:mm')}
+                </span>
+              </div>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Yenilənmə tarixi:</span>
+                <span className={styles.metaValue}>
+                  {dayjs(user.updated_at).format('DD.MM.YYYY HH:mm')}
+                </span>
+              </div>
+            </div>
+          </Card>
+        </Col>
+        <Col xs={24} sm={12}>
+          <Card title="Təhlükəsizlik" className={styles.metaCard}>
+            <Button
+              type="primary"
+              icon={<LockOutlined />}
+              onClick={() => setIsPasswordModalVisible(true)}
+              block
+              size="large"
+            >
+              Şifrəni Dəyişdir
+            </Button>
+          </Card>
+        </Col>
+      </Row>
 
-			<Modal
-				title="Şifrəni Dəyişdir"
-				open={isPasswordModalVisible}
-				onOk={handlePasswordChange}
-				onCancel={handlePasswordModalCancel}
-				confirmLoading={changePasswordMutation.isPending}
-				okText="Dəyişdir"
-				cancelText="Ləğv et"
-			>
-				<Form
-					form={passwordForm}
-					layout="vertical"
-					style={{ marginTop: "24px" }}
-				>
-					<Form.Item
-						label="Cari Şifrə"
-						name="current_password"
-						rules={[{ required: true, message: "Cari şifrənizi daxil edin" }]}
-					>
-						<Input.Password
-							prefix={<LockOutlined />}
-							placeholder="Cari şifrə"
-							size="large"
-						/>
-					</Form.Item>
-					<Form.Item
-						label="Yeni Şifrə"
-						name="new_password"
-						rules={[
-							{ required: true, message: "Yeni şifrənizi daxil edin" },
-							{ min: 8, message: "Şifrə ən azı 8 simvol olmalıdır" },
-						]}
-					>
-						<Input.Password
-							prefix={<LockOutlined />}
-							placeholder="Yeni şifrə"
-							size="large"
-						/>
-					</Form.Item>
-					<Form.Item
-						label="Yeni Şifrəni Təsdiqlə"
-						name="confirm_password"
-						dependencies={["new_password"]}
-						rules={[
-							{ required: true, message: "Yeni şifrənizi təsdiq edin" },
-							({ getFieldValue }) => ({
-								validator(_, value) {
-									if (!value || getFieldValue("new_password") === value) {
-										return Promise.resolve();
-									}
-									return Promise.reject(new Error("Şifrələr uyğun gəlmir"));
-								},
-							}),
-						]}
-					>
-						<Input.Password
-							prefix={<LockOutlined />}
-							placeholder="Yeni şifrəni təsdiqlə"
-							size="large"
-						/>
-					</Form.Item>
-				</Form>
-			</Modal>
-		</div>
-	);
+      <Modal
+        title="Şifrəni Dəyişdir"
+        open={isPasswordModalVisible}
+        onOk={handlePasswordChange}
+        onCancel={handlePasswordModalCancel}
+        confirmLoading={changePasswordMutation.isPending}
+        okText="Dəyişdir"
+        cancelText="Ləğv et"
+      >
+        <Form form={passwordForm} layout="vertical" style={{ marginTop: '24px' }}>
+          <Form.Item
+            label="Cari Şifrə"
+            name="current_password"
+            rules={[{ required: true, message: 'Cari şifrənizi daxil edin' }]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="Cari şifrə" size="large" />
+          </Form.Item>
+          <Form.Item
+            label="Yeni Şifrə"
+            name="new_password"
+            rules={[
+              { required: true, message: 'Yeni şifrənizi daxil edin' },
+              { min: 8, message: 'Şifrə ən azı 8 simvol olmalıdır' },
+            ]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="Yeni şifrə" size="large" />
+          </Form.Item>
+          <Form.Item
+            label="Yeni Şifrəni Təsdiqlə"
+            name="confirm_password"
+            dependencies={['new_password']}
+            rules={[
+              { required: true, message: 'Yeni şifrənizi təsdiq edin' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('new_password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Şifrələr uyğun gəlmir'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Yeni şifrəni təsdiqlə"
+              size="large"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
 };
 
 export default Profile;

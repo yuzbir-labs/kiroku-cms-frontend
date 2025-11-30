@@ -35,7 +35,7 @@ const Landing: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); 
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -98,8 +98,7 @@ const Landing: React.FC = () => {
     {
       icon: <CalendarOutlined style={{ color: '#ffffff' }} />,
       title: 'Davamlılıq və Jurnal İdarəçiliyi',
-      description:
-        'Artıq davamiyyət cədvəllərini kağızla və ya Excel-də aparmağa ehtiyac yoxdur.',
+      description: 'Artıq davamiyyət cədvəllərini kağızla və ya Excel-də aparmağa ehtiyac yoxdur.',
       list: [
         'Dərsə gələn və gəlməyən tələbələrin asan işarələnməsi',
         'Davamiyyət tarixçəsinin hər an izlənməsi',
@@ -138,8 +137,7 @@ const Landing: React.FC = () => {
     {
       icon: <BarChartOutlined style={{ color: '#ffffff' }} />,
       title: 'Hesabatlar və Analitika',
-      description:
-        'Təşkilatınızın fəaliyyətini detallı statistika və hesabatlarla izləyin.',
+      description: 'Təşkilatınızın fəaliyyətini detallı statistika və hesabatlarla izləyin.',
       list: [
         'Filiallar üzrə ümumi statistika',
         'Tələbə və müəllim saylarının monitorinqi',
@@ -155,34 +153,19 @@ const Landing: React.FC = () => {
       title: 'Təşkilat Admini',
       icon: <CrownOutlined style={{ color: '#667eea' }} />,
       description: 'Bütün sistem üzərində tam nəzarət və idarəetmə',
-      features: [
-        'Filial idarəsi',
-        'İstifadəçi rolları',
-        'Ümumi statistika',
-        'Sistem parametrləri',
-      ],
+      features: ['Filial idarəsi', 'İstifadəçi rolları', 'Ümumi statistika', 'Sistem parametrləri'],
     },
     {
       title: 'Filial Meneceri',
       icon: <IdcardOutlined style={{ color: '#667eea' }} />,
       description: 'Filial səviyyəsində tədris proseslərinin idarəsi',
-      features: [
-        'Kurs idarəsi',
-        'Müəllim təyini',
-        'Qrup yaradılması',
-        'Davamiyyət nəzarəti',
-      ],
+      features: ['Kurs idarəsi', 'Müəllim təyini', 'Qrup yaradılması', 'Davamiyyət nəzarəti'],
     },
     {
       title: 'Müəllim',
       icon: <UserOutlined style={{ color: '#667eea' }} />,
       description: 'Dərslərin keçirilməsi və tələbə idarəsi',
-      features: [
-        'Davamiyyət qeydi',
-        'Material paylaşımı',
-        'Tələbə məlumatları',
-        'Dərs cədvəli',
-      ],
+      features: ['Davamiyyət qeydi', 'Material paylaşımı', 'Tələbə məlumatları', 'Dərs cədvəli'],
     },
     {
       title: 'Tələbə',
@@ -211,16 +194,10 @@ const Landing: React.FC = () => {
   return (
     <div className={styles.landing}>
       {/* Header */}
-      <header
-        className={`${styles.header} ${isVisible ? styles.headerVisible : ''}`}
-      >
+      <header className={`${styles.header} ${isVisible ? styles.headerVisible : ''}`}>
         <div className={styles.headerContent}>
           <div className={styles.logo} onClick={() => navigate('/')}>
-            <img
-              src="/kiroku-icon.svg"
-              alt="Kiroku"
-              className={styles.logoSvg}
-            />
+            <img src="/kiroku-icon.svg" alt="Kiroku" className={styles.logoSvg} />
             <span className={styles.logoText}>iroku</span>
           </div>
           <button className={styles.loginButton} onClick={handleLoginClick}>
@@ -231,9 +208,7 @@ const Landing: React.FC = () => {
 
       {/* Hero Section */}
       <section className={styles.hero}>
-        <div
-          className={`${styles.heroContent} ${isVisible ? styles.fadeInUp : ''}`}
-        >
+        <div className={`${styles.heroContent} ${isVisible ? styles.fadeInUp : ''}`}>
           <div className={styles.heroBadge}>
             <span className={styles.badgeIcon}>
               <StarOutlined style={{ color: '#667eea' }} />
@@ -245,9 +220,9 @@ const Landing: React.FC = () => {
             <span className={styles.gradientText}> Sadələşdirin</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Kiroku – təhsil müəssisələri, kurs mərkəzləri və təlim platformaları
-            üçün tam funksional idarəetmə sistemi. Filiallarınızı, kurslarınızı,
-            müəllimlərinizi və tələbələrinizi vahid platformada idarə edin.
+            Kiroku – təhsil müəssisələri, kurs mərkəzləri və təlim platformaları üçün tam funksional
+            idarəetmə sistemi. Filiallarınızı, kurslarınızı, müəllimlərinizi və tələbələrinizi vahid
+            platformada idarə edin.
           </p>
           <div className={styles.heroButtons}>
             <button className={styles.heroCta} onClick={handleLoginClick}>
@@ -259,9 +234,7 @@ const Landing: React.FC = () => {
             <button
               className={styles.heroSecondary}
               onClick={() => {
-                document
-                  .getElementById('features')
-                  ?.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
               Ətraflı Məlumat
@@ -296,15 +269,10 @@ const Landing: React.FC = () => {
           </div>
           <div className={styles.featuresGrid}>
             {features.map((feature, index) => (
-              <div
-                key={index}
-                className={`${styles.featureCard} ${styles.animateOnScroll}`}
-              >
+              <div key={index} className={`${styles.featureCard} ${styles.animateOnScroll}`}>
                 <div className={styles.featureIcon}>{feature.icon}</div>
                 <h3 className={styles.featureTitle}>{feature.title}</h3>
-                <p className={styles.featureDescription}>
-                  {feature.description}
-                </p>
+                <p className={styles.featureDescription}>{feature.description}</p>
                 <ul className={styles.featureList}>
                   {feature.list.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -320,19 +288,14 @@ const Landing: React.FC = () => {
       <section className={styles.roles}>
         <div className={styles.rolesContent}>
           <div className={`${styles.sectionHeader} ${styles.animateOnScroll}`}>
-            <h2 className={styles.sectionTitle}>
-              Hər Kəs Üçün Xüsusi İmkanlar
-            </h2>
+            <h2 className={styles.sectionTitle}>Hər Kəs Üçün Xüsusi İmkanlar</h2>
             <p className={styles.sectionSubtitle}>
               İstifadəçi roluna görə fərqli səlahiyyət və funksiyalar
             </p>
           </div>
           <div className={styles.rolesGrid}>
             {roles.map((role, index) => (
-              <div
-                key={index}
-                className={`${styles.roleCard} ${styles.animateOnScroll}`}
-              >
+              <div key={index} className={`${styles.roleCard} ${styles.animateOnScroll}`}>
                 <div className={styles.roleIcon}>{role.icon}</div>
                 <h3 className={styles.roleTitle}>{role.title}</h3>
                 <p className={styles.roleDescription}>{role.description}</p>
@@ -352,22 +315,15 @@ const Landing: React.FC = () => {
         <div className={styles.benefitsContent}>
           <div className={`${styles.sectionHeader} ${styles.animateOnScroll}`}>
             <h2 className={styles.sectionTitle}>Niyə Kiroku?</h2>
-            <p className={styles.sectionSubtitle}>
-              Təhsil idarəçiliyində yeni standart
-            </p>
+            <p className={styles.sectionSubtitle}>Təhsil idarəçiliyində yeni standart</p>
           </div>
           <div className={styles.benefitsGrid}>
             {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className={`${styles.benefitItem} ${styles.animateOnScroll}`}
-              >
+              <div key={index} className={`${styles.benefitItem} ${styles.animateOnScroll}`}>
                 <span className={styles.benefitIcon}>
                   <CheckOutlined style={{ color: '#10b981' }} />
                 </span>
-                <span className={styles.benefitText}>
-                  {benefit.replace('✅ ', '')}
-                </span>
+                <span className={styles.benefitText}>{benefit.replace('✅ ', '')}</span>
               </div>
             ))}
           </div>
@@ -379,9 +335,9 @@ const Landing: React.FC = () => {
         <div className={`${styles.ctaContent} ${styles.animateOnScroll}`}>
           <h2 className={styles.ctaTitle}>Hazırsınızsa, İndi Başlayın</h2>
           <p className={styles.ctaDescription}>
-            Kiroku sizin təhsil müəssisənizin daxili idarəetməsini gücləndirir,
-            təlim keyfiyyətini artırır və vaxtınıza qənaət edir. Fokusunuzu
-            sənədləşməyə deyil – həqiqi tədris prosesinə yönəldin.
+            Kiroku sizin təhsil müəssisənizin daxili idarəetməsini gücləndirir, təlim keyfiyyətini
+            artırır və vaxtınıza qənaət edir. Fokusunuzu sənədləşməyə deyil – həqiqi tədris
+            prosesinə yönəldin.
           </p>
           <button className={styles.ctaButton} onClick={handleLoginClick}>
             <span>İndi Başlayın</span>

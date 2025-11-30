@@ -3,9 +3,7 @@ import api from '../../config/api';
 import type { Enrollment, EnrollmentCreate, EnrollmentUpdate } from './types';
 
 // API functions
-const createEnrollment = async (
-  data: EnrollmentCreate
-): Promise<Enrollment> => {
+const createEnrollment = async (data: EnrollmentCreate): Promise<Enrollment> => {
   const response = await api.post('/enrollments/', data);
   return response.data;
 };
@@ -47,10 +45,7 @@ const dropEnrollment = async (id: number): Promise<Enrollment> => {
 };
 
 // Mutation hooks
-export const useCreateEnrollmentMutation = createMutation<
-  Enrollment,
-  EnrollmentCreate
->({
+export const useCreateEnrollmentMutation = createMutation<Enrollment, EnrollmentCreate>({
   mutationFn: createEnrollment,
   invalidateKeys: ['enrollments'],
   onSuccessMessage: 'Qeydiyyat uğurla yaradıldı!',
@@ -84,14 +79,12 @@ export const useDeleteEnrollmentMutation = createMutation<void, number>({
   onErrorMessage: 'Qeydiyyat silmək alınmadı',
 });
 
-export const useCompleteEnrollmentMutation = createMutation<Enrollment, number>(
-  {
-    mutationFn: completeEnrollment,
-    invalidateKeys: ['enrollments'],
-    onSuccessMessage: 'Qeydiyyat uğurla tamamlandı!',
-    onErrorMessage: 'Qeydiyyatı tamamlamaq alınmadı',
-  }
-);
+export const useCompleteEnrollmentMutation = createMutation<Enrollment, number>({
+  mutationFn: completeEnrollment,
+  invalidateKeys: ['enrollments'],
+  onSuccessMessage: 'Qeydiyyat uğurla tamamlandı!',
+  onErrorMessage: 'Qeydiyyatı tamamlamaq alınmadı',
+});
 
 export const useDropEnrollmentMutation = createMutation<Enrollment, number>({
   mutationFn: dropEnrollment,

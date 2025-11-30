@@ -1,15 +1,9 @@
 import { createMutation } from '../../config';
 import api from '../../config/api';
-import type {
-  Organization,
-  OrganizationCreate,
-  OrganizationUpdate,
-} from './types';
+import type { Organization, OrganizationCreate, OrganizationUpdate } from './types';
 
 // API functions
-const createOrganization = async (
-  data: OrganizationCreate
-): Promise<Organization> => {
+const createOrganization = async (data: OrganizationCreate): Promise<Organization> => {
   const response = await api.post('/organizations/', data);
   return response.data;
 };
@@ -41,10 +35,7 @@ const deleteOrganization = async (id: number): Promise<void> => {
 };
 
 // Mutation hooks
-export const useCreateOrganizationMutation = createMutation<
-  Organization,
-  OrganizationCreate
->({
+export const useCreateOrganizationMutation = createMutation<Organization, OrganizationCreate>({
   mutationFn: createOrganization,
   invalidateKeys: ['organizations'],
   onSuccessMessage: 'Təşkilat uğurla yaradıldı!',

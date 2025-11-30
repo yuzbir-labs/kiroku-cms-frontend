@@ -8,9 +8,7 @@ import type {
 } from './types';
 
 // API functions
-const fetchOrganizations = async (
-  params?: OrganizationListParams
-): Promise<Organization[]> => {
+const fetchOrganizations = async (params?: OrganizationListParams): Promise<Organization[]> => {
   const response = await api.get('/organizations/', { params });
   return response.data;
 };
@@ -25,11 +23,10 @@ const fetchOrganizationBranches = async (): Promise<OrganizationBranch[]> => {
   return response.data;
 };
 
-const fetchOrganizationStatistics =
-  async (): Promise<OrganizationStatistics> => {
-    const response = await api.get(`/organizations/my/statistics/`);
-    return response.data;
-  };
+const fetchOrganizationStatistics = async (): Promise<OrganizationStatistics> => {
+  const response = await api.get(`/organizations/my/statistics/`);
+  return response.data;
+};
 
 // Query hooks
 export const useOrganizationsQuery = (params?: OrganizationListParams) => {

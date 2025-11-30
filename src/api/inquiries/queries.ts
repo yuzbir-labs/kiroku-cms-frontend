@@ -3,9 +3,7 @@ import api from '../../config/api';
 import type { Inquiry, InquiryListParams } from './types';
 
 // API functions
-const fetchInquiries = async (
-  params?: InquiryListParams
-): Promise<Inquiry[]> => {
+const fetchInquiries = async (params?: InquiryListParams): Promise<Inquiry[]> => {
   const response = await api.get('/inquiries/', { params });
   return response.data;
 };

@@ -7,16 +7,8 @@ export interface ButtonProps extends AntButtonProps {
   children?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  className,
-  type,
-  ...props
-}) => {
-  const classes = [
-    styles.button,
-    type === 'primary' ? styles.primary : '',
-    className,
-  ]
+export const Button: React.FC<ButtonProps> = ({ className, type, ...props }) => {
+  const classes = [styles.button, type === 'primary' ? styles.primary : '', className]
     .filter(Boolean)
     .join(' ');
 

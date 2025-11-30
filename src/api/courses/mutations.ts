@@ -15,13 +15,7 @@ const createCourse = async (data: CourseCreate): Promise<Course> => {
   return response.data;
 };
 
-const updateCourse = async ({
-  id,
-  data,
-}: {
-  id: number;
-  data: CourseUpdate;
-}): Promise<Course> => {
+const updateCourse = async ({ id, data }: { id: number; data: CourseUpdate }): Promise<Course> => {
   const response = await api.put(`/courses/${id}/`, data);
   return response.data;
 };
@@ -62,10 +56,7 @@ const updateCourseGroup = async ({
   groupId: number;
   data: CourseGroupUpdate;
 }): Promise<CourseGroup> => {
-  const response = await api.put(
-    `/courses/${courseId}/groups/${groupId}/`,
-    data
-  );
+  const response = await api.put(`/courses/${courseId}/groups/${groupId}/`, data);
   return response.data;
 };
 
@@ -78,10 +69,7 @@ const partialUpdateCourseGroup = async ({
   groupId: number;
   data: Partial<CourseGroupUpdate>;
 }): Promise<CourseGroup> => {
-  const response = await api.patch(
-    `/courses/${courseId}/groups/${groupId}/`,
-    data
-  );
+  const response = await api.patch(`/courses/${courseId}/groups/${groupId}/`, data);
   return response.data;
 };
 
@@ -103,10 +91,7 @@ export const useCreateCourseMutation = createMutation<Course, CourseCreate>({
   onErrorMessage: 'Kurs yaratmaq alınmadı',
 });
 
-export const useUpdateCourseMutation = createMutation<
-  Course,
-  { id: number; data: CourseUpdate }
->({
+export const useUpdateCourseMutation = createMutation<Course, { id: number; data: CourseUpdate }>({
   mutationFn: updateCourse,
   invalidateKeys: ['courses'],
   onSuccessMessage: 'Kurs uğurla yeniləndi!',

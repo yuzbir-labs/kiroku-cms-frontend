@@ -23,30 +23,22 @@ const logout = async (): Promise<MessageResponse> => {
   return response.data;
 };
 
-const changePassword = async (
-  data: PasswordChangeRequest
-): Promise<MessageResponse> => {
+const changePassword = async (data: PasswordChangeRequest): Promise<MessageResponse> => {
   const response = await api.post('/auth/password/change/', data);
   return response.data;
 };
 
-const requestPasswordReset = async (
-  data: PasswordResetRequest
-): Promise<MessageResponse> => {
+const requestPasswordReset = async (data: PasswordResetRequest): Promise<MessageResponse> => {
   const response = await api.post('/auth/password-reset/request/', data);
   return response.data;
 };
 
-const verifyPasswordResetToken = async (
-  data: TokenVerify
-): Promise<MessageResponse> => {
+const verifyPasswordResetToken = async (data: TokenVerify): Promise<MessageResponse> => {
   const response = await api.post('/auth/password-reset/verify/', data);
   return response.data;
 };
 
-const confirmPasswordReset = async (
-  data: PasswordResetConfirm
-): Promise<MessageResponse> => {
+const confirmPasswordReset = async (data: PasswordResetConfirm): Promise<MessageResponse> => {
   const response = await api.post('/auth/password-reset/confirm/', data);
   return response.data;
 };
@@ -74,10 +66,7 @@ export const useLogoutMutation = createMutation<MessageResponse, void>({
   onErrorMessage: 'Çıxış zamanı xəta baş verdi',
 });
 
-export const useChangePasswordMutation = createMutation<
-  MessageResponse,
-  PasswordChangeRequest
->({
+export const useChangePasswordMutation = createMutation<MessageResponse, PasswordChangeRequest>({
   mutationFn: changePassword,
   invalidateKeys: [],
   onSuccessMessage: 'Şifrə uğurla dəyişdirildi!',
@@ -94,10 +83,7 @@ export const useRequestPasswordResetMutation = createMutation<
   onErrorMessage: 'Email göndərmək alınmadı',
 });
 
-export const useVerifyPasswordResetTokenMutation = createMutation<
-  MessageResponse,
-  TokenVerify
->({
+export const useVerifyPasswordResetTokenMutation = createMutation<MessageResponse, TokenVerify>({
   mutationFn: verifyPasswordResetToken,
   invalidateKeys: [],
   onSuccessMessage: 'Token doğrulandı!',
@@ -114,10 +100,7 @@ export const useConfirmPasswordResetMutation = createMutation<
   onErrorMessage: 'Şifrə sıfırlamaq alınmadı',
 });
 
-export const useUpdateProfileMutation = createMutation<
-  User,
-  ProfileUpdateRequest
->({
+export const useUpdateProfileMutation = createMutation<User, ProfileUpdateRequest>({
   mutationFn: updateProfile,
   invalidateKeys: ['auth'],
   onSuccessMessage: 'Profil uğurla yeniləndi!',

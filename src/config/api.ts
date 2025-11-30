@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const isLocalhost =
-  window.location.hostname === 'localhost' ||
-  window.location.hostname === '127.0.0.1';
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 const api = axios.create({
   baseURL: isLocalhost ? '/api' : import.meta.env.VITE_API_URL || '/api',
@@ -35,9 +34,7 @@ const fetchCSRFToken = async (): Promise<string> => {
   // Create new fetch promise
   csrfTokenPromise = (async () => {
     try {
-      const baseURL = isLocalhost
-        ? '/api'
-        : import.meta.env.VITE_API_URL || '/api';
+      const baseURL = isLocalhost ? '/api' : import.meta.env.VITE_API_URL || '/api';
       const response = await axios.get(`${baseURL}/auth/csrf/`, {
         withCredentials: true,
       });
@@ -115,11 +112,7 @@ api.interceptors.response.use(
     const { status, data } = error.response;
 
     // Handle CSRF token errors with retry
-    if (
-      status === 403 &&
-      data?.detail?.includes('CSRF') &&
-      !originalRequest._retry
-    ) {
+    if (status === 403 && data?.detail?.includes('CSRF') && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         // Clear cached CSRF token and fetch a new one
@@ -155,8 +148,7 @@ api.interceptors.response.use(
     // Handle forbidden errors
     if (status === 403) {
       return Promise.reject({
-        message:
-          data?.detail || 'Bu əməliyyatı yerinə yetirmək üçün icazəniz yoxdur.',
+        message: data?.detail || 'Bu əməliyyatı yerinə yetirmək üçün icazəniz yoxdur.',
         type: 'authorization',
         status,
         originalError: error,
@@ -187,9 +179,7 @@ api.interceptors.response.use(
     // Handle server errors
     if (status >= 500) {
       return Promise.reject({
-        message:
-          data?.detail ||
-          'Server xətası baş verdi. Zəhmət olmasa sonra yenidən cəhd edin.',
+        message: data?.detail || 'Server xətası baş verdi. Zəhmət olmasa sonra yenidən cəhd edin.',
         type: 'server',
         status,
         originalError: error,

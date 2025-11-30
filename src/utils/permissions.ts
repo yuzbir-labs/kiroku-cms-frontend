@@ -16,10 +16,7 @@ export const UserRoles = {
 /**
  * Check if user has a specific role
  */
-export const hasRole = (
-  user: User | null | undefined,
-  role: UserType
-): boolean => {
+export const hasRole = (user: User | null | undefined, role: UserType): boolean => {
   if (!user) return false;
   return user.user_type === role;
 };
@@ -27,10 +24,7 @@ export const hasRole = (
 /**
  * Check if user has any of the specified roles
  */
-export const hasAnyRole = (
-  user: User | null | undefined,
-  roles: UserType[]
-): boolean => {
+export const hasAnyRole = (user: User | null | undefined, roles: UserType[]): boolean => {
   if (!user) return false;
   return roles.includes(user.user_type);
 };
@@ -38,10 +32,7 @@ export const hasAnyRole = (
 /**
  * Check if user has all of the specified roles
  */
-export const hasAllRoles = (
-  user: User | null | undefined,
-  roles: UserType[]
-): boolean => {
+export const hasAllRoles = (user: User | null | undefined, roles: UserType[]): boolean => {
   if (!user) return false;
   return roles.every((role) => hasRole(user, role));
 };
@@ -57,9 +48,7 @@ export const isAuthenticated = (user: User | null | undefined): boolean => {
  * Check if user can manage organization
  * Only Organization Admin
  */
-export const canManageOrganization = (
-  user: User | null | undefined
-): boolean => {
+export const canManageOrganization = (user: User | null | undefined): boolean => {
   return hasRole(user, UserRoles.ORGANIZATION_ADMIN);
 };
 
@@ -105,9 +94,7 @@ export const canDeleteCourses = (user: User | null | undefined): boolean => {
  */
 export const canViewCourses = (user: User | null | undefined): boolean => {
   if (!user) return false;
-  return (
-    user.user_type !== UserRoles.STUDENT && user.user_type !== UserRoles.PARENT
-  );
+  return user.user_type !== UserRoles.STUDENT && user.user_type !== UserRoles.PARENT;
 };
 
 /**
@@ -193,9 +180,7 @@ export const canViewAttendance = (user: User | null | undefined): boolean => {
  * Check if user can create enrollments
  * Only Organization Admin, Branch Admin, and Branch Manager
  */
-export const canCreateEnrollments = (
-  user: User | null | undefined
-): boolean => {
+export const canCreateEnrollments = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
@@ -207,9 +192,7 @@ export const canCreateEnrollments = (
  * Check if user can update enrollments
  * Only Organization Admin, Branch Admin, and Branch Manager
  */
-export const canUpdateEnrollments = (
-  user: User | null | undefined
-): boolean => {
+export const canUpdateEnrollments = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
@@ -221,9 +204,7 @@ export const canUpdateEnrollments = (
  * Check if user can delete enrollments
  * Only Organization Admin, Branch Admin, and Branch Manager
  */
-export const canDeleteEnrollments = (
-  user: User | null | undefined
-): boolean => {
+export const canDeleteEnrollments = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
@@ -270,9 +251,7 @@ export const canViewInquiries = (user: User | null | undefined): boolean => {
 /**
  * Get editable profile fields for a user based on their role
  */
-export const getEditableProfileFields = (
-  user: User | null | undefined
-): string[] => {
+export const getEditableProfileFields = (user: User | null | undefined): string[] => {
   if (!user) return [];
 
   // Organization Admin can edit everything
@@ -338,12 +317,8 @@ export const canCreateUserType = (
   }
 
   // Branch Admin and Branch Manager can only create students, teachers, parents
-  if (
-    hasAnyRole(currentUser, [UserRoles.BRANCH_ADMIN, UserRoles.BRANCH_MANAGER])
-  ) {
-    return [UserRoles.STUDENT, UserRoles.TEACHER, UserRoles.PARENT].includes(
-      targetUserType
-    );
+  if (hasAnyRole(currentUser, [UserRoles.BRANCH_ADMIN, UserRoles.BRANCH_MANAGER])) {
+    return [UserRoles.STUDENT, UserRoles.TEACHER, UserRoles.PARENT].includes(targetUserType);
   }
 
   return false;
@@ -401,9 +376,7 @@ export const canManageUser = (
 /**
  * Check if user can access dashboard statistics
  */
-export const canViewDashboardStats = (
-  user: User | null | undefined
-): boolean => {
+export const canViewDashboardStats = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
@@ -417,18 +390,13 @@ export const canViewDashboardStats = (
  */
 export const canViewDashboard = (user: User | null | undefined): boolean => {
   if (!user) return false;
-  return (
-    user.user_type !== UserRoles.STUDENT && user.user_type !== UserRoles.PARENT
-  );
+  return user.user_type !== UserRoles.STUDENT && user.user_type !== UserRoles.PARENT;
 };
 
 /**
  * Check if field is editable by user
  */
-export const canEditField = (
-  user: User | null | undefined,
-  fieldName: string
-): boolean => {
+export const canEditField = (user: User | null | undefined, fieldName: string): boolean => {
   const editableFields = getEditableProfileFields(user);
   return editableFields.includes(fieldName);
 };
@@ -450,9 +418,7 @@ export const canViewCourseGroups = (user: User | null | undefined): boolean => {
  * Check if user can manage course groups (create, update, delete)
  * Organization Admin, Branch Admin, Branch Manager
  */
-export const canManageCourseGroups = (
-  user: User | null | undefined
-): boolean => {
+export const canManageCourseGroups = (user: User | null | undefined): boolean => {
   return hasAnyRole(user, [
     UserRoles.ORGANIZATION_ADMIN,
     UserRoles.BRANCH_ADMIN,
