@@ -60,7 +60,10 @@ const Inquiries: React.FC = () => {
     page_size: pageSize,
   });
 
-  const { data: branches } = useBranchesQuery({ is_active: true });
+  const { data: branches, isLoading: branchesLoading } = useBranchesQuery({
+    is_active: true,
+    page_size: 100,
+  });
 
   const createMutation = useCreateInquiryMutation(messageApi);
   const updateMutation = usePartialUpdateInquiryMutation(messageApi);
@@ -424,8 +427,14 @@ const Inquiries: React.FC = () => {
           <Form.Item name="address" label="Ünvan">
             <Input.TextArea rows={2} />
           </Form.Item>
-          <Form.Item name="branch" label="Filial">
+          <Form.Item
+            name="branch"
+            label="Filial"
+            rules={[{ required: true, message: 'Filial seçin' }]}
+          >
             <Select
+              placeholder="Filial seçin"
+              loading={branchesLoading}
               options={branches?.results?.map((branch) => ({
                 label: branch.name,
                 value: branch.id,
