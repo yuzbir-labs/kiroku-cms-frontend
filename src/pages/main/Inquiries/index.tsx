@@ -435,7 +435,7 @@ const Inquiries: React.FC = () => {
             <Select
               placeholder="Filial seçin"
               loading={branchesLoading}
-              options={branches?.results?.map((branch) => ({
+              options={branches?.map((branch) => ({
                 label: branch.name,
                 value: branch.id,
               }))}
