@@ -11,7 +11,10 @@ export type InquirySource =
   | 'PHONE'
   | 'EMAIL'
   | 'REFERRAL'
-  | 'SOCIAL_MEDIA'
+  | 'WHATSAPP'
+  | 'FACEBOOK'
+  | 'INSTAGRAM'
+  | 'LINKEDIN'
   | 'WALK_IN'
   | 'OTHER';
 
@@ -34,7 +37,8 @@ export interface Inquiry {
   assigned_to: number | null;
   assigned_to_name: string;
   follow_up_date: string | null;
-  notes: string | null;
+  general_notes: string | null;
+  notes_count: number;
   preferred_start_date: string | null;
   budget: string | null;
   converted_to_student: number | null;
@@ -60,7 +64,7 @@ export interface InquiryCreate {
   source?: InquirySource;
   assigned_to?: number | null;
   follow_up_date?: string | null;
-  notes?: string | null;
+  general_notes?: string | null;
   preferred_start_date?: string | null;
   budget?: string | null;
 }
@@ -78,7 +82,7 @@ export interface InquiryUpdate {
   source?: InquirySource;
   assigned_to?: number | null;
   follow_up_date?: string | null;
-  notes?: string | null;
+  general_notes?: string | null;
   preferred_start_date?: string | null;
   budget?: string | null;
 }
@@ -95,6 +99,24 @@ export interface InquiryListParams {
 
 export interface InquiryAssignRequest {
   assigned_to: number;
+}
+
+export interface InquiryNote {
+  id: number;
+  inquiry: number;
+  note: string;
+  created_by: number | null;
+  created_by_name: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InquiryNoteCreate {
+  note: string;
+}
+
+export interface InquiryNoteUpdate {
+  note: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

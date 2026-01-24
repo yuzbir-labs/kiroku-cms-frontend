@@ -1,12 +1,24 @@
 import {
+  CommentOutlined,
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
   UserAddOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
-import { Alert, DatePicker, Form, Modal, message, Popconfirm, Space, Spin, Tag } from 'antd';
-import { FilterPanel, PageHeader } from 'components/custom';
+import {
+  Alert,
+  DatePicker,
+  Drawer,
+  Form,
+  Modal,
+  message,
+  Popconfirm,
+  Space,
+  Spin,
+  Tag,
+} from 'antd';
+import { FilterPanel, InquiryNotes, PageHeader } from 'components/custom';
 import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
@@ -38,12 +50,15 @@ const Inquiries: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<InquiryStatus | undefined>();
   const [sourceFilter, setSourceFilter] = useState<InquirySource | undefined>();
+  const [branchFilter, setBranchFilter] = useState<number | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [modalVisible, setModalVisible] = useState(false);
   const [assignModalVisible, setAssignModalVisible] = useState(false);
+  const [notesDrawerVisible, setNotesDrawerVisible] = useState(false);
   const [editingInquiry, setEditingInquiry] = useState<Inquiry | null>(null);
   const [assigningInquiry, setAssigningInquiry] = useState<Inquiry | null>(null);
+  const [viewingNotesInquiry, setViewingNotesInquiry] = useState<Inquiry | null>(null);
   const [form] = Form.useForm();
   const [assignForm] = Form.useForm();
 
@@ -56,6 +71,7 @@ const Inquiries: React.FC = () => {
     search: searchTerm || undefined,
     status: statusFilter,
     source: sourceFilter,
+    branch: branchFilter,
     page: currentPage,
     page_size: pageSize,
   });
@@ -99,6 +115,11 @@ const Inquiries: React.FC = () => {
     setAssigningInquiry(record);
     assignForm.resetFields();
     setAssignModalVisible(true);
+  };
+
+  const handleNotesClick = (record: Inquiry) => {
+    setViewingNotesInquiry(record);
+    setNotesDrawerVisible(true);
   };
 
   const handleAssignOk = async () => {
@@ -184,7 +205,10 @@ const Inquiries: React.FC = () => {
     PHONE: 'Telefon',
     EMAIL: 'Email',
     REFERRAL: 'Tövsiyə',
-    SOCIAL_MEDIA: 'Sosial media',
+    WHATSAPP: 'WhatsApp',
+    FACEBOOK: 'Facebook',
+    INSTAGRAM: 'Instagram',
+    LINKEDIN: 'LinkedIn',
     WALK_IN: 'Gəlmə',
     OTHER: 'Digər',
   };
@@ -238,6 +262,21 @@ const Inquiries: React.FC = () => {
       dataIndex: 'days_since_inquiry',
       key: 'days_since_inquiry',
       render: (days: string) => `${days} gün`,
+    },
+    {
+      title: 'Qeydlər',
+      dataIndex: 'notes_count',
+      key: 'notes_count',
+      render: (count: number, record: Inquiry) => (
+        <Button
+          type="link"
+          icon={<CommentOutlined />}
+          onClick={() => handleNotesClick(record)}
+          size="small"
+        >
+          {count || 0}
+        </Button>
+      ),
     },
     {
       title: 'Əməliyyatlar',
@@ -351,10 +390,27 @@ const Inquiries: React.FC = () => {
               { label: 'Telefon', value: 'PHONE' },
               { label: 'Email', value: 'EMAIL' },
               { label: 'Tövsiyə', value: 'REFERRAL' },
-              { label: 'Sosial media', value: 'SOCIAL_MEDIA' },
+              { label: 'WhatsApp', value: 'WHATSAPP' },
+              { label: 'Facebook', value: 'FACEBOOK' },
+              { label: 'Instagram', value: 'INSTAGRAM' },
+              { label: 'LinkedIn', value: 'LINKEDIN' },
               { label: 'Gəlmə', value: 'WALK_IN' },
               { label: 'Digər', value: 'OTHER' },
             ],
+          },
+          branch: {
+            type: 'select',
+            placeholder: 'Filial',
+            value: branchFilter,
+            onChange: (value) => {
+              setBranchFilter(value as number | undefined);
+              setCurrentPage(1); // Reset to first page when filter changes
+            },
+            options: branches?.map((b) => ({
+              label: b.name,
+              value: b.id,
+            })),
+            allowClear: true,
           },
         }}
       />
@@ -454,7 +510,10 @@ const Inquiries: React.FC = () => {
                 { label: 'Telefon', value: 'PHONE' },
                 { label: 'Email', value: 'EMAIL' },
                 { label: 'Tövsiyə', value: 'REFERRAL' },
-                { label: 'Sosial media', value: 'SOCIAL_MEDIA' },
+                { label: 'WhatsApp', value: 'WHATSAPP' },
+                { label: 'Facebook', value: 'FACEBOOK' },
+                { label: 'Instagram', value: 'INSTAGRAM' },
+                { label: 'LinkedIn', value: 'LINKEDIN' },
                 { label: 'Gəlmə', value: 'WALK_IN' },
                 { label: 'Digər', value: 'OTHER' },
               ]}
@@ -480,8 +539,8 @@ const Inquiries: React.FC = () => {
           <Form.Item name="budget" label="Büdcə (aylıq)">
             <Input type="number" step="0.01" min={0} />
           </Form.Item>
-          <Form.Item name="notes" label="Qeydlər">
-            <Input.TextArea rows={3} />
+          <Form.Item name="general_notes" label="Ümumi qeydlər">
+            <Input.TextArea rows={3} placeholder="Ümumi qeydlər (əlavə qeydlər üçün qeydlər bölməsini istifadə edin)" />
           </Form.Item>
         </Form>
       </Modal>
@@ -509,6 +568,18 @@ const Inquiries: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      <Drawer
+        title={`Qeydlər - ${viewingNotesInquiry?.full_name || ''}`}
+        open={notesDrawerVisible}
+        onClose={() => {
+          setNotesDrawerVisible(false);
+          setViewingNotesInquiry(null);
+        }}
+        width={720}
+      >
+        {viewingNotesInquiry && <InquiryNotes inquiryId={viewingNotesInquiry.id} />}
+      </Drawer>
     </div>
   );
 };
