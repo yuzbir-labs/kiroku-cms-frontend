@@ -45,28 +45,7 @@ const Landing: React.FC = () => {
     navigate('/login');
   };
 
-  const statistics = [
-    {
-      value: '100+',
-      label: 'Təşkilat',
-      icon: <BankOutlined style={{ color: '#667eea' }} />,
-    },
-    {
-      value: '5000+',
-      label: 'Tələbə',
-      icon: <TeamOutlined style={{ color: '#667eea' }} />,
-    },
-    {
-      value: '500+',
-      label: 'Müəllim',
-      icon: <UserOutlined style={{ color: '#667eea' }} />,
-    },
-    {
-      value: '1000+',
-      label: 'Kurs',
-      icon: <BookOutlined style={{ color: '#667eea' }} />,
-    },
-  ];
+  // Removed statistics section as requested
 
   const features = [
     {
@@ -244,20 +223,7 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className={`${styles.statistics} ${styles.animateOnScroll}`}>
-        <div className={styles.statisticsContent}>
-          <div className={styles.statsGrid}>
-            {statistics.map((stat, index) => (
-              <div key={index} className={styles.statCard}>
-                <div className={styles.statIcon}>{stat.icon}</div>
-                <div className={styles.statValue}>{stat.value}</div>
-                <div className={styles.statLabel}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Statistics Section removed as requested */}
 
       {/* Features Section */}
       <section id="features" className={styles.features}>
