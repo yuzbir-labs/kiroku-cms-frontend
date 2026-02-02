@@ -87,7 +87,9 @@ const CourseGroups: React.FC = () => {
   const teachers = teachersResponse?.results || [];
 
   const { data: branchesResponse } = useBranchesQuery();
-  const branches = branchesResponse?.results || [];
+  const branches = Array.isArray(branchesResponse)
+    ? branchesResponse
+    : branchesResponse?.results || [];
 
   const createMutation = useCreateCourseGroupMutation(messageApi);
   const updateMutation = useUpdateCourseGroupMutation(messageApi);
